@@ -6,6 +6,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { DashboardPage } from "@/pages/DashboardPage";
+import { CreateContentPage } from "@/pages/content/CreateContentPage";
+import { ContentListPage } from "@/pages/content/ContentListPage";
+import { QuestionBankPage } from "@/pages/question-bank/QuestionBankPage";
+import { ReviewsPage } from "@/pages/reviews/ReviewsPage";
 import { useAuthStore } from "@/stores/authStore";
 
 const queryClient = new QueryClient();
@@ -34,14 +38,15 @@ const App = () => (
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             {/* Content Management Routes */}
-            <Route path="content" element={<div>Content List Page</div>} />
-            <Route path="content/create" element={<div>Create Content Page</div>} />
-            <Route path="content/:id" element={<div>Edit Content Page</div>} />
+            <Route path="content" element={<ContentListPage />} />
+            <Route path="content/create" element={<CreateContentPage />} />
+            <Route path="content/:id" element={<div>View Content Page</div>} />
+            <Route path="content/:id/edit" element={<div>Edit Content Page</div>} />
             
             {/* Question Management Routes */}
             <Route path="questions" element={<div>Questions Page</div>} />
-            <Route path="question-bank" element={<div>Question Bank Page</div>} />
-            <Route path="reviews" element={<div>Reviews Page</div>} />
+            <Route path="question-bank" element={<QuestionBankPage />} />
+            <Route path="reviews" element={<ReviewsPage />} />
             
             {/* Student Routes */}
             <Route path="learn" element={<div>Learning Units Page</div>} />
