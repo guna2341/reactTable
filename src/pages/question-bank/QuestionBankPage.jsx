@@ -242,7 +242,7 @@ export function QuestionBankPage() {
             Organize and manage questions by topic hierarchy
           </p>
         </div>
-        <Button variant="hero">
+        <Button >
           <Plus className="h-4 w-4 mr-2" />
           Add Question
         </Button>
@@ -298,10 +298,6 @@ export function QuestionBankPage() {
                       <SelectItem value="Hard">Hard</SelectItem>
                     </SelectContent>
                   </Select>
-
-                  <Button variant="outline" size="icon">
-                    <Filter className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
             </CardContent>

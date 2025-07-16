@@ -10,12 +10,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuthStore } from '@/stores/authStore';
+import {useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/authStore';
 
 export function Header() {
   const { user, logout } = useAuthStore();
+  const nav = useNavigate();
 
-  const getInitials = (name: string) => {
+  function handleNavigate() {
+      nav("/profile")
+  }
+
+  const getInitials = (name) => {
     return name
       .split(' ')
       .map((n) => n[0])
@@ -23,7 +29,7 @@ export function Header() {
       .toUpperCase();
   };
 
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role) => {
     switch (role) {
       case 'admin':
         return 'text-destructive';
@@ -49,12 +55,12 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-4 w-4" />
-          <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            3
-          </span>
-        </Button>
+          {/* <Button variant="ghost" size="icon" className="relative">
+            <Bell className="h-4 w-4" />
+            <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              3
+            </span>
+          </Button> */}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -76,13 +82,12 @@ export function Header() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+            onClick={() => handleNavigate()
+            }
+            >
               <User className="mr-2 h-4 w-4" />
               Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive">

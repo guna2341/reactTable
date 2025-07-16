@@ -19,12 +19,15 @@ import {AssessmentDetailPage} from "./pages/students/assessmentPage";
 import { AssessmentListPage } from "./pages/students/assessmentList";
 import { AssessmentResultPage } from "./pages/students/result";
 import { AssessmentResultDetailPage } from "./pages/students/resultDetailPage";
+import QuestionCreator from "./pages/question-bank/CreateQuestionBankPage";
+import { CommentsPage } from "./pages/commentsPage";
+import { ProfilePage } from "./pages/profilePage";
 
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuthStore();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  return isAuthenticated ? <div className="h-screen">{children}</div> : <Navigate to="/login" replace />;
 }
 
 const App = () => (
@@ -51,9 +54,17 @@ const App = () => (
             <Route path="content/:id" element={<ContentViewPage />} />
             <Route path="content/:id/edit" element={<ContentEditPage />} />
 
+            <Route path="/profile" element={<ProfilePage/>} />
+
             {/* Question Management Routes */}
-            <Route path="questions" element={<div>Questions Page</div>} />
-            <Route path="question-bank" element={<QuestionBankPage />} />
+            <Route path="questions/create" element={
+              <TooltipProvider>
+              <QuestionCreator />
+              </TooltipProvider>
+              } />
+            <Route path="question-bank" element={
+              <QuestionBankPage />
+              } />
             <Route path="reviews" element={<ReviewsPage />} />
 
             {/* Student Routes */}
@@ -62,17 +73,18 @@ const App = () => (
             <Route path="assessment/:assessmentId" element={<AssessmentDetailPage />}/>
             <Route path="/results" element={<AssessmentResultPage />} />
             <Route path="/assessment-result/:id" element={<AssessmentResultDetailPage />} />
-
+            <Route path="learningUnits" element={<div>learning units</div>} />
+            
             {/* Admin Routes */}
             <Route path="users" element={<div>Users Management Page</div>} />
             <Route path="settings" element={<div>Settings Page</div>} />
-            <Route path="comments" element={<div>Comments Page</div>} />
+            <Route path="comments" element={<CommentsPage/>} />
           </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
 );
 
 export default App;
