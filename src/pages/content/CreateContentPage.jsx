@@ -392,7 +392,7 @@ export function CreateContentPage() {
             <Button type="button" variant="outline" onClick={() => navigate('/content')}>
               Cancel
             </Button>
-            <Button type="submit" variant="hero">
+            <Button type="submit">
               <Save className="h-4 w-4 mr-2" />
               Create Unit
             </Button>

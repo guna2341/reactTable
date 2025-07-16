@@ -14,6 +14,7 @@ import { useAuthStore } from "@/stores/authStore";
 import "./App.css";
 import { ContentViewPage } from "./pages/content/contentViewPage";
 import { ContentEditPage } from "./pages/content/ContentEditPage";
+import QuestionCreator from "./pages/question-bank/CreateQuestionBankPage";
 
 const queryClient = new QueryClient();
 
@@ -50,7 +51,11 @@ const App = () => (
             />
 
             {/* Question Management Routes */}
-            <Route path="questions" element={<div>Questions Page</div>} />
+            <Route path="questions" element={
+              <TooltipProvider>
+              <QuestionCreator />
+              </TooltipProvider>
+              } />
             <Route path="question-bank" element={<QuestionBankPage />} />
             <Route path="reviews" element={<ReviewsPage />} />
 
