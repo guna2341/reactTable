@@ -22,7 +22,7 @@ const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuthStore();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  return isAuthenticated ? <div className="h-screen">{children}</div> : <Navigate to="/login" replace />;
 }
 
 const App = () => (
@@ -60,7 +60,9 @@ const App = () => (
               <QuestionCreator />
               </TooltipProvider>
               } />
-            <Route path="question-bank" element={<QuestionBankPage />} />
+            <Route path="question-bank" element={
+              <QuestionBankPage />
+              } />
             <Route path="reviews" element={<ReviewsPage />} />
 
             {/* Student Routes */}
@@ -68,7 +70,8 @@ const App = () => (
             <Route path="learn/:id" element={<div>Unit Detail Page</div>} />
             <Route path="assessments" element={<div>Assessments Page</div>} />
             <Route path="results" element={<div>Results Page</div>} />
-
+            <Route path="learningUnits" element={<div>learning units</div>} />
+            
             {/* Admin Routes */}
             <Route path="users" element={<div>Users Management Page</div>} />
             <Route path="settings" element={<div>Settings Page</div>} />
@@ -78,7 +81,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
 );
 
 export default App;

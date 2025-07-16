@@ -566,14 +566,12 @@ export default function QuestionCreator() {
                                         {topicPath.map((topic, index) => (
                                             <div key={topic.id} className="flex items-center">
                                                 {index > 0 && <span className="mx-1">/</span>}
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
+                                                <div
                                                     onClick={() => setActiveTopic(topic.id)}
-                                                    className="h-auto p-1 font-medium text-primary hover:text-primary"
+                                                    className="h-auto p-1 font-medium text-primary hover:text-primary cursor-pointer"
                                                 >
                                                     {topic.name}
-                                                </Button>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

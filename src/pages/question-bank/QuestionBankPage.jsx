@@ -38,12 +38,7 @@ export function QuestionBankPage() {
           id: 'algebra',
           name: 'Algebra',
           children: [
-            {
-              id: 'basic-algebra', name: 'Basic Operations', questionCount: 25, children: [
-                {
-                  id: 'basic-algebra', name: 'Basic Operations', questionCount: 25
-              }
-            ] },
+            { id: 'basic-algebra', name: 'Basic Operations', questionCount: 25 },
             { id: 'equations', name: 'Linear Equations', questionCount: 18 },
             { id: 'quadratic', name: 'Quadratic Equations', questionCount: 12 }
           ]
@@ -247,7 +242,7 @@ export function QuestionBankPage() {
             Organize and manage questions by topic hierarchy
           </p>
         </div>
-        <Button>
+        <Button >
           <Plus className="h-4 w-4 mr-2" />
           Add Question
         </Button>
@@ -303,10 +298,6 @@ export function QuestionBankPage() {
                       <SelectItem value="Hard">Hard</SelectItem>
                     </SelectContent>
                   </Select>
-
-                  <Button variant="outline" size="icon">
-                    <Filter className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
             </CardContent>
