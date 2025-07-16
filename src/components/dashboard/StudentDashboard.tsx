@@ -92,7 +92,7 @@ export function StudentDashboard() {
             Continue your learning journey and track your progress
           </p>
         </div>
-        <Button onClick={() => navigate('/learn')} variant="hero">
+        <Button onClick={() => navigate('/learn')}>
           <BookOpen className="h-4 w-4 mr-2" />
           Browse Units
         </Button>

@@ -122,7 +122,7 @@ export function ReviewerDashboard() {
             Review and approve questions to maintain quality standards
           </p>
         </div>
-        <Button onClick={() => navigate('/reviews')} variant="hero">
+        <Button onClick={() => navigate('/reviews')}>
           <CheckSquare className="h-4 w-4 mr-2" />
           Start Reviewing
         </Button>
