@@ -9,6 +9,7 @@ import {
   PlusCircle,
   Library,
   MessageSquare,
+  NotebookIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from "../../stores/authStore";
@@ -23,7 +24,8 @@ export function Sidebar() {
     { to: '/content/create', icon: PlusCircle, label: 'Create Unit' },
     { to: '/questions/create', icon: FileText, label: 'Create Questions' },
     { to: '/question-bank', icon: Library, label: 'Question Bank' },
-    { to: '/reviews', icon: CheckSquare, label: 'Reviews' },
+    { to: '/learningUnits',icon:NotebookIcon,label:"Learning Units"},
+    { to: '/reviews', icon: CheckSquare, label: 'Reviews' }
   ];
 
   const reviewerNavItems = [

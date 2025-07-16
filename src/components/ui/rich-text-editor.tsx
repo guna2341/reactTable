@@ -119,13 +119,6 @@ export function RichTextEditor({
         </ToolbarButton>
 
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          isActive={editor.isActive("blockquote")}
-        >
-          <Quote className="h-4 w-4" />
-        </ToolbarButton>
-
-        <ToolbarButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           isActive={editor.isActive("codeBlock")}
         >
