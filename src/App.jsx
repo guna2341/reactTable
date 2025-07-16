@@ -15,6 +15,8 @@ import "./App.css";
 import { ContentViewPage } from "./pages/content/contentViewPage";
 import { ContentEditPage } from "./pages/content/ContentEditPage";
 import QuestionCreator from "./pages/question-bank/CreateQuestionBankPage";
+import { CommentsPage } from "./pages/commentsPage";
+import { ProfilePage } from "./pages/profilePage";
 
 const queryClient = new QueryClient();
 
@@ -50,8 +52,10 @@ const App = () => (
               element={<ContentEditPage/>}
             />
 
+            <Route path="/profile" element={<ProfilePage/>} />
+
             {/* Question Management Routes */}
-            <Route path="questions" element={
+            <Route path="questions/create" element={
               <TooltipProvider>
               <QuestionCreator />
               </TooltipProvider>
@@ -68,7 +72,7 @@ const App = () => (
             {/* Admin Routes */}
             <Route path="users" element={<div>Users Management Page</div>} />
             <Route path="settings" element={<div>Settings Page</div>} />
-            <Route path="comments" element={<div>Comments Page</div>} />
+            <Route path="comments" element={<CommentsPage/>} />
           </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

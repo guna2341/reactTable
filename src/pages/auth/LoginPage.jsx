@@ -77,7 +77,7 @@ export function LoginPage() {
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl blur opacity-20 animate-pulse"></div>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">ContentHub</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Content Management</h1>
           <p className="text-white/80">Educational Content & Assessment Platform</p>
         </div>
 
@@ -136,7 +136,7 @@ export function LoginPage() {
                 </Select>
               </div>
 
-              <Button type="submit" className="w-full" variant="hero" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>

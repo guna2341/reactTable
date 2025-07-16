@@ -11,7 +11,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from "../../stores/authStore";
 import { Button } from '@/components/ui/button';
 
 export function Sidebar() {
@@ -21,18 +21,17 @@ export function Sidebar() {
     { to: '/dashboard', icon: BarChart3, label: 'Dashboard' },
     { to: '/content', icon: BookOpen, label: 'Content Units' },
     { to: '/content/create', icon: PlusCircle, label: 'Create Unit' },
-    { to: '/questions', icon: FileText, label: 'Questions' },
+    { to: '/questions/create', icon: FileText, label: 'Create Questions' },
     { to: '/question-bank', icon: Library, label: 'Question Bank' },
     { to: '/reviews', icon: CheckSquare, label: 'Reviews' },
-    { to: '/users', icon: Users, label: 'Users' },
-    { to: '/settings', icon: Settings, label: 'Settings' },
   ];
 
   const reviewerNavItems = [
-    { to: '/dashboard', icon: BarChart3, label: 'Dashboard' },
-    { to: '/reviews', icon: CheckSquare, label: 'Reviews' },
-    { to: '/question-bank', icon: Library, label: 'Question Bank' },
-    { to: '/comments', icon: MessageSquare, label: 'Comments' },
+    { to: "/dashboard", icon: BarChart3, label: "Dashboard" },
+    { to: "/reviews", icon: CheckSquare, label: "Reviews" },
+    { to: "/content", icon: BookOpen, label: "Content Units" },
+    { to: "/question-bank", icon: Library, label: "Question Bank" },
+    { to: "/comments", icon: MessageSquare, label: "Comments" },
   ];
 
   const studentNavItems = [
@@ -61,11 +60,11 @@ export function Sidebar() {
     <aside className="w-64 bg-gradient-card border-r h-screen sticky top-0">
       <div className="p-6">
         <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-            <BookOpen className="h-5 w-5 text-primary-foreground" />
+          <div className="w-7 h-7 bg-gradient-primary rounded-sm flex items-center justify-center">
+            <BookOpen className="h-4 w-4 text-primary-foreground" />
           </div>
-          <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            ContentHub
+          <h1 className="text-md font-bold bg-gradient-primary bg-clip-text text-transparent">
+            Content Management
           </h1>
         </div>
 
@@ -89,18 +88,6 @@ export function Sidebar() {
             </NavLink>
           ))}
         </nav>
-      </div>
-
-      <div className="absolute bottom-4 left-4 right-4">
-        <div className="bg-gradient-secondary/10 rounded-lg p-4 text-center">
-          <h3 className="font-semibold text-sm mb-1">Need Help?</h3>
-          <p className="text-xs text-muted-foreground mb-3">
-            Check our documentation for guidance
-          </p>
-          <Button variant="outline" size="sm" className="w-full">
-            Documentation
-          </Button>
-        </div>
       </div>
     </aside>
   );

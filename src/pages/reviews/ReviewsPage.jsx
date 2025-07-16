@@ -25,6 +25,7 @@ export function ReviewsPage() {
       id: '1',
       question: 'What is the chemical formula for water?',
       type: 'MCQ',
+      kind:"passage",
       unit: 'Chemistry Basics',
       topic: 'Molecular Formulas',
       options: ['H2O', 'CO2', 'NaCl', 'CH4'],
@@ -48,6 +49,7 @@ export function ReviewsPage() {
       id: '2',
       question: 'Explain the process of photosynthesis in detail.',
       type: 'Long Answer',
+      kind: "question bank",
       unit: 'Biology Fundamentals',
       topic: 'Plant Biology',
       correctAnswer:
@@ -65,6 +67,7 @@ export function ReviewsPage() {
       id: '3',
       question: 'Solve: ∫(2x + 3)dx',
       type: 'Short Answer',
+      kind: "question bank",
       unit: 'Advanced Mathematics',
       topic: 'Calculus',
       correctAnswer: 'x² + 3x + C',
@@ -97,6 +100,7 @@ export function ReviewsPage() {
       id: '4',
       question: 'What is the capital of France?',
       type: 'MCQ',
+      kind: "passage",
       unit: 'World Geography',
       reviewedAt: '2024-01-15',
       finalStatus: 'approved',
@@ -107,6 +111,7 @@ export function ReviewsPage() {
       id: '5',
       question: 'Describe the causes of World War I.',
       type: 'Long Answer',
+      kind: "question bank",
       unit: 'Modern History',
       reviewedAt: '2024-01-12',
       finalStatus: 'needs_revision',
@@ -217,6 +222,9 @@ export function ReviewsPage() {
                       </Badge>
                       <Badge variant="outline">
                         {question.reviewsCompleted}/{question.reviewsNeeded} reviews
+                      </Badge>
+                      <Badge variant="outline">
+                      {question.kind}  
                       </Badge>
                     </div>
 
@@ -352,6 +360,9 @@ export function ReviewsPage() {
                       <Badge variant="outline" className={getStatusColor(review.myReview)}>
                         My Review: {review.myReview.replace('_', ' ')}
                       </Badge>
+                      <Badge variant="outline">
+                        {review.kind}
+                      </Badge>
                     </div>
                     <h3 className="text-lg font-semibold mb-2">{review.question}</h3>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
@@ -366,10 +377,6 @@ export function ReviewsPage() {
                       </div>
                     )}
                   </div>
-                  <Button variant="outline" size="sm">
-                    <Eye className="h-4 w-4 mr-1" />
-                    View Details
-                  </Button>
                 </div>
               </CardContent>
             </Card>
