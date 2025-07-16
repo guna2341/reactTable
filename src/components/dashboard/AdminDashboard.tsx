@@ -84,7 +84,7 @@ export function AdminDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => navigate('/content/create')} variant="hero">
+          <Button onClick={() => navigate('/content/create')}   >
             <Plus className="h-4 w-4 mr-2" />
             Create Unit
           </Button>

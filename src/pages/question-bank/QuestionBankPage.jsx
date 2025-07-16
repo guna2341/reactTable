@@ -11,7 +11,6 @@ import {
   Eye, 
   MessageSquare, 
   ThumbsUp, 
-  ThumbsDown, 
   Edit, 
   AlertTriangle,
   BookOpen,
@@ -25,9 +24,9 @@ export function QuestionBankPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
-  const [showCommentBox, setShowCommentBox] = useState<string | null>(null);
+  const [showCommentBox, setShowCommentBox] = useState(null);
   const [commentText, setCommentText] = useState('');
-  const [expandedTopics, setExpandedTopics] = useState<string[]>(['math']);
+  const [expandedTopics, setExpandedTopics] = useState(['math']);
 
   // Mock data for question hierarchy
   const questionTopics = [
@@ -141,7 +140,7 @@ export function QuestionBankPage() {
     }
   ];
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case 'approved':
         return 'bg-success/10 text-success';
@@ -154,7 +153,7 @@ export function QuestionBankPage() {
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'Easy':
         return 'bg-success/10 text-success';
@@ -167,7 +166,7 @@ export function QuestionBankPage() {
     }
   };
 
-  const getTypeColor = (type: string) => {
+  const getTypeColor = (type) => {
     switch (type) {
       case 'MCQ':
         return 'bg-primary/10 text-primary';
@@ -180,7 +179,7 @@ export function QuestionBankPage() {
     }
   };
 
-  const toggleTopic = (topicId: string) => {
+  const toggleTopic = (topicId) => {
     setExpandedTopics(prev => 
       prev.includes(topicId) 
         ? prev.filter(id => id !== topicId)
@@ -188,14 +187,14 @@ export function QuestionBankPage() {
     );
   };
 
-  const handleAddComment = (questionId: string) => {
+  const handleAddComment = (questionId) => {
     // Handle comment submission
     console.log('Adding comment to question:', questionId, commentText);
     setCommentText('');
     setShowCommentBox(null);
   };
 
-  const renderTopicTree = (topics: any[], level = 0) => {
+  const renderTopicTree = (topics, level = 0) => {
     return topics.map(topic => (
       <div key={topic.id} className={`${level > 0 ? 'ml-4' : ''}`}>
         <Collapsible 

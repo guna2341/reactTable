@@ -88,7 +88,7 @@ export function ContentListPage() {
     }
   ];
 
-  const getContentTypeIcon = (type: string) => {
+  const getContentTypeIcon = (type) => {
     switch (type) {
       case 'video': return Video;
       case 'image': return ImageIcon;
@@ -96,7 +96,7 @@ export function ContentListPage() {
     }
   };
 
-  const getContentTypeColor = (type: string) => {
+  const getContentTypeColor = (type) => {
     switch (type) {
       case 'video': return 'bg-secondary/10 text-secondary';
       case 'image': return 'bg-accent/10 text-accent';
@@ -104,20 +104,18 @@ export function ContentListPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
-      case 'published':
+      case 'review completed':
         return 'bg-success/10 text-success';
       case 'review':
         return 'bg-warning/10 text-warning';
-      case 'draft':
-        return 'bg-muted/10 text-muted-foreground';
       default:
         return 'bg-muted/10 text-muted-foreground';
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status) => {
     switch (status) {
       case 'published':
         return CheckCircle;
@@ -130,7 +128,7 @@ export function ContentListPage() {
     }
   };
 
-  const getLanguageLabel = (lang: string) => {
+  const getLanguageLabel = (lang) => {
     switch (lang) {
       case 'hi': return 'हिंदी';
       case 'ta': return 'தமிழ்';
@@ -156,7 +154,7 @@ export function ContentListPage() {
             Manage educational content and associated questions
           </p>
         </div>
-        <Button onClick={() => navigate('/content/create')} variant="hero">
+        <Button onClick={() => navigate('/content/create')}>
           <Plus className="h-4 w-4 mr-2" />
           Create Unit
         </Button>

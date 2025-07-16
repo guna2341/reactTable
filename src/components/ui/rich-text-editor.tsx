@@ -41,7 +41,7 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         class: cn(
-          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] p-4',
+          'mx-auto focus:outline-none min-h-[200px] p-2 m-0',
           className
         ),
       },
@@ -80,24 +80,24 @@ export function RichTextEditor({
 
   return (
     <div className="border rounded-lg overflow-hidden bg-background">
-      <div className="border-b p-2 flex items-center gap-1 flex-wrap">
+      <div className="border-b p-2 flex gap-1 flex-wrap">
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
-          isActive={editor.isActive('bold')}
+          isActive={editor.isActive("bold")}
         >
           <Bold className="h-4 w-4" />
         </ToolbarButton>
-        
+
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          isActive={editor.isActive('italic')}
+          isActive={editor.isActive("italic")}
         >
           <Italic className="h-4 w-4" />
         </ToolbarButton>
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleCode().run()}
-          isActive={editor.isActive('code')}
+          isActive={editor.isActive("code")}
         >
           <Code className="h-4 w-4" />
         </ToolbarButton>
@@ -106,28 +106,28 @@ export function RichTextEditor({
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          isActive={editor.isActive('bulletList')}
+          isActive={editor.isActive("bulletList")}
         >
           <List className="h-4 w-4" />
         </ToolbarButton>
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          isActive={editor.isActive('orderedList')}
+          isActive={editor.isActive("orderedList")}
         >
           <ListOrdered className="h-4 w-4" />
         </ToolbarButton>
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          isActive={editor.isActive('blockquote')}
+          isActive={editor.isActive("blockquote")}
         >
           <Quote className="h-4 w-4" />
         </ToolbarButton>
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          isActive={editor.isActive('codeBlock')}
+          isActive={editor.isActive("codeBlock")}
         >
           <Code className="h-4 w-4" />
         </ToolbarButton>
@@ -149,10 +149,9 @@ export function RichTextEditor({
         </ToolbarButton>
       </div>
 
-      <EditorContent 
-        editor={editor} 
-        className="min-h-[200px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px]"
-      />
+      <EditorContent
+        editor={editor}
+        className="p-2"    />
     </div>
   );
 }

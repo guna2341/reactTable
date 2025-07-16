@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,14 +13,14 @@ import { useToast } from '@/hooks/use-toast';
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'admin' | 'student' | 'reviewer'>('student');
+  const [role, setRole] = useState ('student');
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -33,7 +34,7 @@ export function LoginPage() {
       };
 
       login(mockUser, 'mock-token-123');
-      
+
       toast({
         title: 'Welcome back!',
         description: `Logged in as ${role}`,
@@ -44,7 +45,7 @@ export function LoginPage() {
     }, 1000);
   };
 
-  const quickLogin = (userRole: 'admin' | 'student' | 'reviewer') => {
+  const quickLogin = (userRole) => {
     const users = {
       admin: { email: 'admin@contenthub.com', name: 'Admin User' },
       student: { email: 'student@contenthub.com', name: 'Student User' },
@@ -57,12 +58,23 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="absolute inset-0 top-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
+        {/* Animated circles */}
+        <div className="absolute top-20 left-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 right-32 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-grid-white/5 bg-grid-pattern"></div>
+      </div>
+      <div className="w-full max-w-md space-y-6 z-10">
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center">
               <BookOpen className="h-8 w-8 text-white" />
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl blur opacity-20 animate-pulse"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl blur opacity-20 animate-pulse"></div>
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">ContentHub</h1>
@@ -112,7 +124,7 @@ export function LoginPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
-                <Select value={role} onValueChange={(value: any) => setRole(value)}>
+                <Select value={role} onValueChange={(value) => setRole(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>

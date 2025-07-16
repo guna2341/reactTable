@@ -29,9 +29,9 @@ export function CreateContentPage() {
   const [formData, setFormData] = useState({
     code: '',
     title: '',
-    contentType: 'text' as 'text' | 'video' | 'image',
+    contentType: 'text',
     content: '',
-    language: 'en' as 'en' | 'hi' | 'ta',
+    language: 'en',
     description: '',
   });
   
@@ -46,13 +46,13 @@ export function CreateContentPage() {
     }
   ]);
   
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  const handleContentChange = (content: string) => {
+  const handleContentChange = (content) => {
     setFormData(prev => ({ ...prev, content }));
   };
 
-  const handleFileSelect = (files: File[]) => {
+  const handleFileSelect = (files) => {
     setUploadedFiles(files);
     if (files.length > 0) {
       const file = files[0];
@@ -76,17 +76,17 @@ export function CreateContentPage() {
     setQuestions([...questions, newQuestion]);
   };
 
-  const removeQuestion = (id: string) => {
+  const removeQuestion = (id) => {
     setQuestions(questions.filter(q => q.id !== id));
   };
 
-  const updateQuestion = (id: string, field: string, value: any) => {
+  const updateQuestion = (id, field, value) => {
     setQuestions(questions.map(q => 
       q.id === id ? { ...q, [field]: value } : q
     ));
   };
 
-  const updateQuestionOption = (questionId: string, optionIndex: number, value: string) => {
+  const updateQuestionOption = (questionId, optionIndex, value) => {
     setQuestions(questions.map(q => 
       q.id === questionId 
         ? { ...q, options: q.options.map((opt, idx) => idx === optionIndex ? value : opt) }
@@ -94,10 +94,9 @@ export function CreateContentPage() {
     ));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Simulate API call
     setTimeout(() => {
       toast({
         title: 'Learning Unit Created!',
@@ -107,7 +106,7 @@ export function CreateContentPage() {
     }, 1000);
   };
 
-  const getContentTypeIcon = (type: string) => {
+  const getContentTypeIcon = (type) => {
     switch (type) {
       case 'video': return Video;
       case 'image': return ImageIcon;
@@ -119,11 +118,10 @@ export function CreateContentPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" onClick={() => navigate('/content')}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Content
+          <ArrowLeft className="!h-8 !w-8" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Create Learning Unit</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Create Learning Unit</h1>
           <p className="text-muted-foreground">
             Add new educational content with associated questions
           </p>
@@ -157,7 +155,7 @@ export function CreateContentPage() {
               
               <div className="space-y-2">
                 <Label htmlFor="language">Language *</Label>
-                <Select value={formData.language} onValueChange={(value: any) => setFormData(prev => ({ ...prev, language: value }))}>
+                <Select value={formData.language} onValueChange={(value) => setFormData(prev => ({ ...prev, language: value }))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -217,7 +215,7 @@ export function CreateContentPage() {
                     type="button"
                     variant={isSelected ? "default" : "outline"}
                     className="h-auto p-4 flex flex-col items-center gap-2"
-                    onClick={() => setFormData(prev => ({ ...prev, contentType: option.type as any }))}
+                    onClick={() => setFormData(prev => ({ ...prev, contentType: option.type}))}
                   >
                     <Icon className={`h-6 w-6 ${isSelected ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
                     <div className="text-center">
@@ -239,7 +237,7 @@ export function CreateContentPage() {
                   content={formData.content}
                   onChange={handleContentChange}
                   placeholder="Write your educational content here. Use the toolbar for formatting, code blocks, and mathematical formulas..."
-                  className="min-h-[300px]"
+                  className="min-h-[300px] p-0"
                 />
               </div>
             )}

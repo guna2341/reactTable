@@ -11,10 +11,13 @@ import { ContentListPage } from "@/pages/content/ContentListPage";
 import { QuestionBankPage } from "@/pages/question-bank/QuestionBankPage";
 import { ReviewsPage } from "@/pages/reviews/ReviewsPage";
 import { useAuthStore } from "@/stores/authStore";
+import "./App.css";
+import { ContentViewPage } from "./pages/content/contentViewPage";
+import { ContentEditPage } from "./pages/content/ContentEditPage";
 
 const queryClient = new QueryClient();
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuthStore();
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
@@ -40,20 +43,23 @@ const App = () => (
             {/* Content Management Routes */}
             <Route path="content" element={<ContentListPage />} />
             <Route path="content/create" element={<CreateContentPage />} />
-            <Route path="content/:id" element={<div>View Content Page</div>} />
-            <Route path="content/:id/edit" element={<div>Edit Content Page</div>} />
-            
+            <Route path="content/:id" element={<ContentViewPage/>} />
+            <Route
+              path="content/:id/edit"
+              element={<ContentEditPage/>}
+            />
+
             {/* Question Management Routes */}
             <Route path="questions" element={<div>Questions Page</div>} />
             <Route path="question-bank" element={<QuestionBankPage />} />
             <Route path="reviews" element={<ReviewsPage />} />
-            
+
             {/* Student Routes */}
             <Route path="learn" element={<div>Learning Units Page</div>} />
             <Route path="learn/:id" element={<div>Unit Detail Page</div>} />
             <Route path="assessments" element={<div>Assessments Page</div>} />
             <Route path="results" element={<div>Results Page</div>} />
-            
+
             {/* Admin Routes */}
             <Route path="users" element={<div>Users Management Page</div>} />
             <Route path="settings" element={<div>Settings Page</div>} />
