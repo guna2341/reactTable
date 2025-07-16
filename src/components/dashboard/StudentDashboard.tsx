@@ -9,6 +9,9 @@ import {
   Play,
   CheckCircle,
   TrendingUp,
+  FileText,
+  AlertCircle,
+  Calendar,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,84 +20,84 @@ export function StudentDashboard() {
 
   const stats = [
     {
-      title: 'Units Completed',
-      value: '12',
-      total: '24',
-      percentage: 50,
+      title: 'Assessments Completed',
+      value: '5',
+      total: '12',
+      percentage: 42,
       icon: CheckCircle,
       color: 'text-success',
     },
     {
       title: 'Average Score',
-      value: '85%',
-      description: '+5% from last month',
+      value: '78%',
+      description: '+3% from last month',
       icon: Trophy,
       color: 'text-accent',
     },
     {
-      title: 'Study Time',
-      value: '24h',
-      description: 'This week',
+      title: 'Time Spent',
+      value: '14h',
+      description: 'On assessments this month',
       icon: Clock,
       color: 'text-primary',
     },
     {
-      title: 'Current Streak',
-      value: '7 days',
-      description: 'Keep it up!',
+      title: 'Highest Score',
+      value: '94%',
+      description: 'Algebra Midterm',
       icon: Target,
       color: 'text-secondary',
     },
   ];
 
-  const availableUnits = [
+  const upcomingAssessments = [
     {
       id: 1,
-      title: 'Mathematics Fundamentals',
-      description: 'Basic arithmetic and number systems',
-      progress: 75,
-      questionsCount: 15,
-      difficulty: 'Beginner',
-      estimatedTime: '45 min',
+      title: 'Mathematics Midterm',
+      type: 'Exam',
+      dueDate: '2023-11-15',
+      duration: '90 min',
+      status: 'Not Started',
+      preparation: 30,
     },
     {
       id: 2,
-      title: 'English Literature',
-      description: 'Poetry analysis and comprehension',
-      progress: 30,
-      questionsCount: 20,
-      difficulty: 'Intermediate',
-      estimatedTime: '60 min',
+      title: 'English Essay',
+      type: 'Assignment',
+      dueDate: '2023-11-20',
+      duration: 'Take-home',
+      status: 'In Progress',
+      preparation: 65,
     },
     {
       id: 3,
-      title: 'Science Basics',
-      description: 'Introduction to physics and chemistry',
-      progress: 0,
-      questionsCount: 25,
-      difficulty: 'Beginner',
-      estimatedTime: '90 min',
+      title: 'Science Quiz',
+      type: 'Quiz',
+      dueDate: '2023-11-10',
+      duration: '30 min',
+      status: 'Not Started',
+      preparation: 0,
     },
   ];
 
-  const recentScores = [
-    { unit: 'Algebra Basics', score: 92, date: '2 days ago' },
-    { unit: 'Reading Comprehension', score: 88, date: '1 week ago' },
-    { unit: 'Chemistry Elements', score: 76, date: '2 weeks ago' },
+  const recentResults = [
+    { assessment: 'Algebra Quiz', score: 88, date: '3 days ago', type: 'Quiz' },
+    { assessment: 'Literature Analysis', score: 76, date: '1 week ago', type: 'Assignment' },
+    { assessment: 'Chemistry Test', score: 82, date: '2 weeks ago', type: 'Test' },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Welcome back!</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Assessment Dashboard</h1>
           <p className="text-muted-foreground">
-            Continue your learning journey and track your progress
+            Track your assessment progress and upcoming evaluations
           </p>
         </div>
-        <Button onClick={() => navigate('/learn')} variant="hero">
-          <BookOpen className="h-4 w-4 mr-2" />
-          Browse Units
+        <Button onClick={() => navigate('/assessments')} variant="hero">
+          <FileText className="h-4 w-4 mr-2" />
+          View All Assessments
         </Button>
       </div>
 
@@ -125,76 +128,92 @@ export function StudentDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Continue Learning */}
+        {/* Upcoming Assessments */}
         <Card className="lg:col-span-2 bg-gradient-card border-0 shadow-soft">
           <CardHeader>
-            <CardTitle>Continue Learning</CardTitle>
-            <CardDescription>Pick up where you left off</CardDescription>
+            <CardTitle>Upcoming Assessments</CardTitle>
+            <CardDescription>Prepare for your next evaluations</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {availableUnits.map((unit) => (
+            {upcomingAssessments.map((assessment) => (
               <div
-                key={unit.id}
+                key={assessment.id}
                 className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
               >
                 <div className="flex-1">
-                  <h3 className="font-semibold">{unit.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{unit.description}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span>{unit.questionsCount} questions</span>
-                    <span>•</span>
-                    <span>{unit.difficulty}</span>
-                    <span>•</span>
-                    <span>{unit.estimatedTime}</span>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">{assessment.title}</h3>
+                    <span className="text-xs px-2 py-1 bg-muted rounded-full">
+                      {assessment.type}
+                    </span>
                   </div>
-                  {unit.progress > 0 && (
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                    <span className="flex items-center">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      Due: {assessment.dueDate}
+                    </span>
+                    <span>•</span>
+                    <span>Duration: {assessment.duration}</span>
+                    <span>•</span>
+                    <span>Status: {assessment.status}</span>
+                  </div>
+                  {assessment.preparation > 0 && (
                     <div className="mt-2">
-                      <Progress value={unit.progress} className="h-1.5" />
+                      <Progress value={assessment.preparation} className="h-1.5" />
                       <p className="text-xs text-muted-foreground mt-1">
-                        {unit.progress}% complete
+                        {assessment.preparation}% prepared
                       </p>
                     </div>
                   )}
                 </div>
                 <Button
-                  variant={unit.progress > 0 ? "default" : "outline"}
-                  onClick={() => navigate(`/learn/${unit.id}`)}
+                  variant={assessment.preparation > 0 ? "default" : "outline"}
+                  onClick={() => navigate(`/assessments/${assessment.id}`)}
                 >
-                  <Play className="h-4 w-4 mr-2" />
-                  {unit.progress > 0 ? 'Continue' : 'Start'}
+                  {assessment.preparation > 0 ? 'Continue Prep' : 'Start Prep'}
                 </Button>
               </div>
             ))}
           </CardContent>
         </Card>
 
-        {/* Recent Performance */}
+        {/* Recent Results */}
         <Card className="bg-gradient-card border-0 shadow-soft">
           <CardHeader>
-            <CardTitle>Recent Scores</CardTitle>
-            <CardDescription>Your latest assessment results</CardDescription>
+            <CardTitle>Recent Results</CardTitle>
+            <CardDescription>Your latest assessment performance</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {recentScores.map((score, index) => (
+            {recentResults.map((result, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-sm">{score.unit}</p>
-                  <p className="text-xs text-muted-foreground">{score.date}</p>
+                  <p className="font-medium text-sm">{result.assessment}</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>{result.type}</span>
+                    <span>•</span>
+                    <span>{result.date}</span>
+                  </div>
                 </div>
                 <div className="text-right">
                   <div className={`font-bold ${
-                    score.score >= 90 ? 'text-success' :
-                    score.score >= 80 ? 'text-accent' :
-                    score.score >= 70 ? 'text-warning' : 'text-destructive'
+                    result.score >= 90 ? 'text-success' :
+                    result.score >= 80 ? 'text-accent' :
+                    result.score >= 70 ? 'text-warning' : 'text-destructive'
                   }`}>
-                    {score.score}%
+                    {result.score}%
                   </div>
+                  {result.score < 70 && (
+                    <div className="text-xs text-muted-foreground flex items-center justify-end mt-1">
+                      <AlertCircle className="h-3 w-3 mr-1" />
+                      Needs review
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
             <Button variant="ghost" className="w-full mt-4">
               <TrendingUp className="h-4 w-4 mr-2" />
-              View All Results
+              View Detailed Analytics
             </Button>
           </CardContent>
         </Card>

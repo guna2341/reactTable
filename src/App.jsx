@@ -14,6 +14,11 @@ import { useAuthStore } from "@/stores/authStore";
 import "./App.css";
 import { ContentViewPage } from "./pages/content/contentViewPage";
 import { ContentEditPage } from "./pages/content/ContentEditPage";
+import { StudentMaterialsPage } from "./pages/students/learningUnits";
+import {AssessmentDetailPage} from "./pages/students/assessmentPage";
+import { AssessmentListPage } from "./pages/students/assessmentList";
+import { AssessmentResultPage } from "./pages/students/result";
+import { AssessmentResultDetailPage } from "./pages/students/resultDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -43,11 +48,8 @@ const App = () => (
             {/* Content Management Routes */}
             <Route path="content" element={<ContentListPage />} />
             <Route path="content/create" element={<CreateContentPage />} />
-            <Route path="content/:id" element={<ContentViewPage/>} />
-            <Route
-              path="content/:id/edit"
-              element={<ContentEditPage/>}
-            />
+            <Route path="content/:id" element={<ContentViewPage />} />
+            <Route path="content/:id/edit" element={<ContentEditPage />} />
 
             {/* Question Management Routes */}
             <Route path="questions" element={<div>Questions Page</div>} />
@@ -55,10 +57,11 @@ const App = () => (
             <Route path="reviews" element={<ReviewsPage />} />
 
             {/* Student Routes */}
-            <Route path="learn" element={<div>Learning Units Page</div>} />
-            <Route path="learn/:id" element={<div>Unit Detail Page</div>} />
-            <Route path="assessments" element={<div>Assessments Page</div>} />
-            <Route path="results" element={<div>Results Page</div>} />
+            <Route path="learn" element={<StudentMaterialsPage />} />
+            <Route path="assessments" element={<AssessmentListPage />} />
+            <Route path="assessment/:assessmentId" element={<AssessmentDetailPage />}/>
+            <Route path="/results" element={<AssessmentResultPage />} />
+            <Route path="/assessment-result/:id" element={<AssessmentResultDetailPage />} />
 
             {/* Admin Routes */}
             <Route path="users" element={<div>Users Management Page</div>} />
