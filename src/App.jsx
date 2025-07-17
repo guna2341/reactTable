@@ -22,6 +22,7 @@ import { AssessmentResultDetailPage } from "./pages/students/resultDetailPage";
 import QuestionCreator from "./pages/question-bank/CreateQuestionBankPage";
 import { CommentsPage } from "./pages/commentsPage";
 import { ProfilePage } from "./pages/profilePage";
+import CreateLearningUnitsPage from "./pages/createLearningUnits";
 
 const queryClient = new QueryClient();
 
@@ -73,7 +74,7 @@ const App = () => (
             <Route path="assessment/:assessmentId" element={<AssessmentDetailPage />}/>
             <Route path="/results" element={<AssessmentResultPage />} />
             <Route path="/assessment-result/:id" element={<AssessmentResultDetailPage />} />
-            <Route path="learningUnits" element={<div>learning units</div>} />
+            <Route path="learningUnits" element={<CreateLearningUnitsPage/>} />
             
             {/* Admin Routes */}
             <Route path="users" element={<div>Users Management Page</div>} />
