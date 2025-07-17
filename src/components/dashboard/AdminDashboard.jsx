@@ -11,68 +11,53 @@ import {
   Eye,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAdminStore } from '../../zustand/admin';
 
 export function AdminDashboard() {
   const navigate = useNavigate();
+  
+  const stats = useAdminStore(state => state.stats);
+  const recentActivities = useAdminStore(state => state.recentActivities);
 
-  const stats = [
-    {
-      title: 'Learning Units',
-      value: '24',
-      change: '+3 this week',
-      icon: BookOpen,
-      color: 'text-primary',
-      bgColor: 'bg-primary/10',
-    },
-    {
-      title: 'Total Questions',
-      value: '156',
-      change: '+12 this week',
-      icon: FileText,
-      color: 'text-secondary',
-      bgColor: 'bg-secondary/10',
-    },
-    {
-      title: 'Active Students',
-      value: '89',
-      change: '+5 this week',
-      icon: Users,
-      color: 'text-accent',
-      bgColor: 'bg-accent/10',
-    },
-    {
-      title: 'Pending Reviews',
-      value: '7',
-      change: '2 urgent',
-      icon: AlertCircle,
-      color: 'text-warning',
-      bgColor: 'bg-warning/10',
-    },
-  ];
+  function getColor(title) {
+    switch (title) {
+      case "Learning Units":
+        return "text-primary";
+      case "Total Questions":
+        return 'text-secondary';
+      case "Active Students":
+        return 'text-accent';
+      case "Pending Reviews":
+        return 'text-warning';
+    };
+  }
 
-  const recentActivities = [
-    {
-      id: 1,
-      type: 'unit_created',
-      message: 'New learning unit "Advanced Mathematics" created',
-      time: '2 hours ago',
-      user: 'Admin User',
-    },
-    {
-      id: 2,
-      type: 'question_submitted',
-      message: '5 new questions submitted for review',
-      time: '4 hours ago',
-      user: 'Content Creator',
-    },
-    {
-      id: 3,
-      type: 'review_completed',
-      message: 'Question review completed by 3 reviewers',
-      time: '6 hours ago',
-      user: 'Review Team',
-    },
-  ];
+  function getIcon(title) {
+    switch (title) {
+      case "Learning Units":
+        return BookOpen;
+      case "Total Questions":
+        return FileText;
+      case "Active Students":
+        return Users;
+      case "Pending Reviews":
+        return AlertCircle;
+    };
+  }
+
+  function getBg(title) {
+    switch (title) {
+      case "Learning Units":
+        return 'bg-primary/10';
+      case "Total Questions":
+        return 'bg-secondary/10';
+      case "Active Students":
+        return 'bg-accent/10';
+      case "Pending Reviews":
+        return 'bg-warning/10';
+    };
+  }
+
 
   return (
     <div className="space-y-6">
@@ -93,20 +78,25 @@ export function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title} className="bg-gradient-card border-0 shadow-soft">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <div className={`${stat.bgColor} p-2 rounded-lg`}>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {stats.map((stat) => {
+          const Icon = getIcon(stat.title);
+          const color = getColor(stat.title);
+          const bgColor = getBg(stat.title);
+         return  (
+            <Card key={stat.title} className="bg-gradient-card border-0 shadow-soft">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                <div className={`${bgColor} p-2 rounded-lg`}>
+                  <Icon className={`h-4 w-4 ${color}`} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
