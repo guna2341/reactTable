@@ -9,43 +9,17 @@ import {
   Calendar,
   FileText
 } from 'lucide-react';
-
-// Mock data for assessments with batch type added
-const assessments = [
-  {
-    id: 'math-midterm',
-    title: 'Mathematics Midterm Assessment',
-    subject: 'Mathematics',
-    description: 'Covers algebra, geometry, and basic trigonometry concepts',
-    duration: 60, // minutes
-    totalQuestions: 25,
-    dueDate: '2024-03-15',
-    batchType: 'Summary'
-  },
-  {
-    id: 'science-quiz1',
-    title: 'Science Quiz - Physics Fundamentals',
-    subject: 'Science',
-    description: 'Basic concepts of motion, force, and energy',
-    duration: 30,
-    totalQuestions: 15,
-    dueDate: '2024-03-10',
-    batchType: 'Questions Bank'
-  },
-  {
-    id: 'history-chapter2',
-    title: 'History Chapter 2 Review',
-    subject: 'History',
-    description: 'World War II and its aftermath',
-    duration: 45,
-    totalQuestions: 20,
-    dueDate: '2024-03-20',
-    batchType: 'Summary'
-  }
-];
+import { useAssessmentStore } from '../../zustand/student/assessmentListState';
 
 export function AssessmentListPage() {
   const navigate = useNavigate();
+  const { assessments, updateAssessmentStatus } = useAssessmentStore();
+
+  const handleStartAssessment = (assessmentId) => {
+    // Update status before navigation
+    updateAssessmentStatus(assessmentId, 'in_progress');
+    navigate(`/assessment/${assessmentId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -70,6 +44,11 @@ export function AssessmentListPage() {
                     <Badge variant="secondary" className="capitalize">
                       {assessment.batchType}
                     </Badge>
+                    {assessment.status === 'in_progress' && (
+                      <Badge variant="outline" className="text-orange-500 border-orange-500">
+                        In Progress
+                      </Badge>
+                    )}
                   </div>
                   
                   <p className="text-muted-foreground">{assessment.description}</p>
@@ -92,10 +71,10 @@ export function AssessmentListPage() {
                 
                 <div className="flex flex-col items-end gap-3 min-w-[200px]">
                   <Button 
-                    onClick={() => navigate(`/assessment/${assessment.id}`)}
+                    onClick={() => handleStartAssessment(assessment.id)}
                     className="gap-1"
                   >
-                    Start Assessment
+                    {assessment.status === 'in_progress' ? 'Continue' : 'Start Assessment'}
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
