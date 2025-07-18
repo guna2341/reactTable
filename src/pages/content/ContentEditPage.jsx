@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import * as z from 'zod';
 import {
     ArrowLeft,
@@ -12,12 +14,13 @@ import {
     CheckCircle,
     Clock,
     AlertCircle,
-    Link,
     Download,
-    Bookmark,
-    Printer,
     Plus,
-    Trash2
+    Trash2,
+    Upload,
+    Edit,
+    Eye,
+    HelpCircle
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,50 +38,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/use-toast';
+import { useContentStore } from '../../zustand/admin/contentUnits';
 
-// Mock data - in a real app, you'd fetch this based on the ID
-const learningUnits = [
-    {
-        id: '1',
-        code: 'MATH-101',
-        title: '    duction to Algebra',
-        description: 'Basic algebraic concepts and operations',
-        content: `
-      Chapter 1: Basic Concepts<
-        Algebra is a branch of mathematics dealing with symbols and the rules for manipulating those symbols.
-      
-      1.1 Variables and Constants<
-        A variable is a symbol (usually a letter) that represents a number that may change.
-        A constant is a fixed value that does not change.
-      
-      1.2 Expressions and Equations
-        An <strong>expression is a combination of variables, numbers and operations.
-        An <strong>equation is a statement that two expressions are equal.
-    `,
-        contentType: 'text',
-        language: 'en',
-        status: 'published',
-        questionsCount: 12,
-        studentsEnrolled: 45,
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-20',
-        createdBy: 'Dr. Smith',
-        tags: ['mathematics', 'beginner', 'core'],
-        attachments: [
-            { name: 'Worksheet.pdf', type: 'pdf', size: '2.4 MB' },
-            { name: 'Practice Problems.docx', type: 'doc', size: '1.8 MB' }
-        ],
-        relatedResources: [
-            { id: '2', title: 'Advanced Algebra Concepts', type: 'video' },
-            { id: '4', title: 'Algebraic Equations Practice', type: 'text' }
-        ]
-    },
-    // ... other mock units from your list
-];
-
-// Form validation schema
 const formSchema = z.object({
     title: z.string().min(2, {
         message: "Title must be at least 2 characters.",
@@ -92,20 +54,31 @@ const formSchema = z.object({
     content: z.string().min(20, {
         message: "Content must be at least 20 characters.",
     }),
+    explanation: z.string().min(10, {
+        message: "Explanation must be at least 10 characters.",
+    }),
     contentType: z.enum(['text', 'video', 'image']),
     language: z.enum(['en', 'hi', 'ta']),
     status: z.enum(['draft', 'review', 'published']),
     tags: z.array(z.string()).optional(),
+    question: z.object({
+        question: z.string().min(5, "Question must be at least 5 characters"),
+        type: z.string().min(1, "Type is required"),
+        topic: z.string().min(1, "Topic is required"),
+        difficulty: z.enum(['Easy', 'Medium', 'Hard']),
+        correctAnswer: z.string().min(1, "Correct answer is required"),
+        explanation: z.string().min(5, "Explanation must be at least 5 characters"),
+    }).optional(),
 });
 
 export function ContentEditPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [newTag, setNewTag] = useState('');
+    const [loading, setLoading] = useState(true);
+    const contentUnits = useContentStore(state => state.content);
+    const unit = contentUnits.find(u => u.id === id);
 
-    // Find the unit - in a real app, you'd fetch this from an API
-    const unit = learningUnits.find(u => u.id === id);
-
-    // Initialize form with default values
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: unit ? {
@@ -113,15 +86,25 @@ export function ContentEditPage() {
             code: unit.code,
             description: unit.description,
             content: unit.content,
+            explanation: unit.explanation || '',
             contentType: unit.contentType,
-            language: unit.language,
+            language: unit.language || 'en',
             status: unit.status,
             tags: unit.tags || [],
+            question: unit.questions ? {
+                question: unit.questions.question,
+                type: unit.questions.type,
+                topic: unit.questions.topic,
+                difficulty: unit.questions.difficulty,
+                correctAnswer: unit.questions.correctAnswer,
+                explanation: unit.questions.explanation,
+            } : undefined
         } : {
             title: '',
             code: '',
             description: '',
             content: '',
+            explanation: '',
             contentType: 'text',
             language: 'en',
             status: 'draft',
@@ -129,9 +112,7 @@ export function ContentEditPage() {
         }
     });
 
-    // Handle form submission
     function onSubmit(values) {
-        // In a real app, you would make an API call here
         console.log('Form submitted with values:', values);
 
         toast({
@@ -139,9 +120,21 @@ export function ContentEditPage() {
             description: `"${values.title}" has been saved.`,
         });
 
-        // Navigate back to view page
         navigate(`/content/${id}`);
     }
+
+    const handleAddTag = () => {
+        if (newTag.trim() && !form.getValues('tags').includes(newTag.trim())) {
+            const currentTags = form.getValues('tags') || [];
+            form.setValue('tags', [...currentTags, newTag.trim()]);
+            setNewTag('');
+        }
+    };
+
+    const handleRemoveTag = (tagToRemove) => {
+        const currentTags = form.getValues('tags') || [];
+        form.setValue('tags', currentTags.filter(tag => tag !== tagToRemove));
+    };
 
     if (!unit) {
         return (
@@ -149,7 +142,7 @@ export function ContentEditPage() {
                 <AlertCircle className="h-12 w-12 text-destructive mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Content Not Found</h2>
                 <p className="text-muted-foreground mb-6">
-                    The learning unit you're trying to edit doesn't exist.
+                    The learning unit you're trying to edit doesn't exist or may have been removed.
                 </p>
                 <Button onClick={() => navigate('/content')}>
                     <ArrowLeft className="h-4 w-4 mr-2" />
@@ -158,14 +151,6 @@ export function ContentEditPage() {
             </div>
         );
     }
-
-    const getContentTypeIcon = (type) => {
-        switch (type) {
-            case 'video': return Video;
-            case 'image': return ImageIcon;
-            default: return FileText;
-        }
-    };
 
     return (
         <div className="space-y-6">
@@ -201,7 +186,7 @@ export function ContentEditPage() {
                                                 <FormControl>
                                                     <Input
                                                         placeholder="Learning unit title"
-                                                        className="text-2xl font-bold border-none p-4 shadow-none focus-visible:ring-0"
+                                                        className="text-2xl font-bold border-none shadow-none focus-visible:ring-0"
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -217,7 +202,7 @@ export function ContentEditPage() {
                                                 <FormControl>
                                                     <Textarea
                                                         placeholder="Brief description of the content"
-                                                        className="border-none p-4 shadow-none focus-visible:ring-0 resize-none"
+                                                        className="border-none shadow-none focus-visible:ring-0 resize-none text-muted-foreground"
                                                         rows={2}
                                                         {...field}
                                                     />
@@ -235,11 +220,13 @@ export function ContentEditPage() {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
-                                                        <Input
-                                                           className="w-auto rounded-lg p-4 space-x-1"
-                                                            {...field}
-                                                        />
+                                                    <Input
+                                                        placeholder="Code"
+                                                        className="w-auto"
+                                                        {...field}
+                                                    />
                                                 </FormControl>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -251,31 +238,32 @@ export function ContentEditPage() {
                                             <FormItem>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
-                                                            <SelectTrigger className="w-auto rounded-lg p-4 space-x-1">
-                                                                    <SelectValue placeholder="Content type" />
-                                                            </SelectTrigger>
+                                                        <SelectTrigger className="w-auto">
+                                                            <SelectValue placeholder="Content type" />
+                                                        </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
                                                         <SelectItem value="text">
                                                             <div className="flex items-center gap-2">
                                                                 <FileText className="h-4 w-4" />
-                                                                Text
+                                                                text
                                                             </div>
                                                         </SelectItem>
                                                         <SelectItem value="video">
                                                             <div className="flex items-center gap-2">
                                                                 <Video className="h-4 w-4" />
-                                                                Video
+                                                                video
                                                             </div>
                                                         </SelectItem>
                                                         <SelectItem value="image">
                                                             <div className="flex items-center gap-2">
                                                                 <ImageIcon className="h-4 w-4" />
-                                                                Image
+                                                                image
                                                             </div>
                                                         </SelectItem>
                                                     </SelectContent>
                                                 </Select>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -287,52 +275,32 @@ export function ContentEditPage() {
                                             <FormItem>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="w-auto rounded-lg p-4 space-x-1">
+                                                        <SelectTrigger className="w-auto">
                                                             <SelectValue placeholder="Status" />
-                                                            </SelectTrigger>
+                                                        </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
                                                         <SelectItem value="draft">
                                                             <div className="flex items-center gap-2">
                                                                 <AlertCircle className="h-4 w-4" />
-                                                                Draft
+                                                                draft
                                                             </div>
                                                         </SelectItem>
                                                         <SelectItem value="review">
                                                             <div className="flex items-center gap-2">
                                                                 <Clock className="h-4 w-4" />
-                                                                In Review
+                                                                review
                                                             </div>
                                                         </SelectItem>
                                                         <SelectItem value="published">
                                                             <div className="flex items-center gap-2">
                                                                 <CheckCircle className="h-4 w-4" />
-                                                                Published
+                                                                published
                                                             </div>
                                                         </SelectItem>
                                                     </SelectContent>
                                                 </Select>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        control={form.control}
-                                        name="language"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger className="w-auto rounded-lg p-4 space-x-1">
-                                                                <SelectValue placeholder="Language" />
-                                                            </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="en">English</SelectItem>
-                                                        <SelectItem value="hi">हिंदी</SelectItem>
-                                                        <SelectItem value="ta">தமிழ்</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -344,257 +312,303 @@ export function ContentEditPage() {
 
                         <CardContent>
                             <Tabs defaultValue="content" className="w-full">
-                                <TabsList className="grid w-full grid-cols-2">
+                                <TabsList className="grid w-full grid-cols-3">
                                     <TabsTrigger value="content">Content</TabsTrigger>
-                                    <TabsTrigger value="metadata">Metadata</TabsTrigger>
+                                    <TabsTrigger value="questions">Questions</TabsTrigger>
+                                    <TabsTrigger value="preview">Preview</TabsTrigger>
                                 </TabsList>
 
                                 <TabsContent value="content" className="mt-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="content"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Learning Content</FormLabel>
-                                                <FormControl>
-                                                    {form.watch('contentType') === 'video' ? (
-                                                        <div className="space-y-4">
-                                                            <div className="aspect-video bg-black rounded-lg flex items-center justify-center">
-                                                                <div className="text-white text-center p-6">
-                                                                    <Video className="h-12 w-12 mx-auto mb-4" />
-                                                                    <h3 className="text-xl font-semibold">Video Content</h3>
-                                                                    <p className="text-muted-foreground">
-                                                                        Video URL or upload would go here
-                                                                    </p>
+                                    <div className="space-y-6">
+                                        <FormField
+                                            control={form.control}
+                                            name="content"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Learning Content</FormLabel>
+                                                    <FormControl>
+                                                        {form.watch('contentType') === 'video' ? (
+                                                            <div className="space-y-4">
+                                                                <div className="aspect-video bg-black rounded-lg flex items-center justify-center">
+                                                                    <div className="text-white text-center p-6">
+                                                                        <Video className="h-12 w-12 mx-auto mb-4" />
+                                                                        <h3 className="text-xl font-semibold">Video Content</h3>
+                                                                        <p className="text-muted-foreground">
+                                                                            Video URL or upload would go here
+                                                                        </p>
+                                                                    </div>
                                                                 </div>
+                                                                <Input
+                                                                    placeholder="Enter video URL or upload file"
+                                                                    {...field}
+                                                                />
                                                             </div>
-                                                            <Input
-                                                                placeholder="Enter video URL or upload file"
-                                                                {...field}
-                                                            />
-                                                        </div>
-                                                    ) : form.watch('contentType') === 'image' ? (
-                                                        <div className="space-y-4">
-                                                            <div className="border rounded-lg p-4 bg-muted/20 flex flex-col items-center justify-center">
-                                                                <ImageIcon className="h-24 w-24 text-muted-foreground mx-auto" />
-                                                                <p className="text-center mt-2 text-muted-foreground">
-                                                                    Upload or drag & drop image content
-                                                                </p>
+                                                        ) : form.watch('contentType') === 'image' ? (
+                                                            <div className="space-y-4">
+                                                                <div className="border rounded-lg p-4 bg-muted/20 flex flex-col items-center justify-center min-h-[200px]">
+                                                                    {loading &&
+                                                                        <ImageIcon className="h-24 w-24 text-muted-foreground mx-auto" />
+                                                                    }
+                                                                    <img
+                                                                        onLoad={() => setLoading(false)}
+                                                                        loading='lazy'
+                                                                        src={field.value}
+                                                                    />
+                                                                </div>
+                                                                <Input
+                                                                    placeholder="Enter image URL or upload file"
+                                                                    {...field}
+                                                                />
                                                             </div>
-                                                            <Input
-                                                                placeholder="Enter image URL or upload file"
-                                                                {...field}
+                                                        ) : (
+                                                            <RichTextEditor
+                                                                content={field.value}
+                                                                onChange={field.onChange}
+                                                                placeholder="Enter your learning content here (supports HTML)"
+                                                                className="min-h-[300px]"
                                                             />
-                                                        </div>
-                                                    ) : (
+                                                        )}
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="explanation"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Explanation</FormLabel>
+                                                    <FormControl>
                                                         <Textarea
-                                                            placeholder="Enter your learning content here (supports Markdown or HTML)"
-                                                            className="min-h-[300px]"
+                                                            placeholder="Provide a detailed explanation of the content"
+                                                            className="min-h-[100px]"
                                                             {...field}
                                                         />
-                                                    )}
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
                                 </TabsContent>
 
-                                <TabsContent value="metadata" className="mt-6">
-                                    <div className="grid gap-6 md:grid-cols-2">
+
+
+                                <TabsContent value="questions">
+                                    <div className="mt-4">
                                         <Card>
                                             <CardHeader>
-                                                <CardTitle>Tags</CardTitle>
+                                                <CardTitle className="flex items-center gap-2">
+                                                    <HelpCircle className="h-5 w-5" />
+                                                    Question Editor
+                                                </CardTitle>
                                             </CardHeader>
-                                            <CardContent>
+                                            <CardContent className="space-y-4">
                                                 <FormField
                                                     control={form.control}
-                                                    name="tags"
+                                                    name="question.question"
                                                     render={({ field }) => (
                                                         <FormItem>
-                                                            <div className="flex flex-wrap gap-2 mb-4">
-                                                                {field.value?.map((tag, index) => (
-                                                                    <Badge key={index} variant="outline" className="flex items-center gap-1">
-                                                                        {tag}
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="icon"
-                                                                            type="button"
-                                                                            className="h-4 w-4"
-                                                                            onClick={() => {
-                                                                                const newTags = [...field.value];
-                                                                                newTags.splice(index, 1);
-                                                                                field.onChange(newTags);
-                                                                            }}
-                                                                        >
-                                                                            <X className="h-3 w-3" />
-                                                                        </Button>
-                                                                    </Badge>
-                                                                ))}
-                                                            </div>
-                                                            <div className="flex gap-2">
-                                                                <Input
-                                                                    placeholder="Add new tag"
-                                                                    onKeyDown={(e) => {
-                                                                        if (e.key === 'Enter' && e.currentTarget.value) {
-                                                                            e.preventDefault();
-                                                                            field.onChange([...(field.value || []), e.currentTarget.value]);
-                                                                            e.currentTarget.value = '';
-                                                                        }
-                                                                    }}
+                                                            <FormLabel>Question Text</FormLabel>
+                                                            <FormControl>
+                                                                <Textarea
+                                                                    placeholder="Enter the question text"
+                                                                    className="min-h-[80px]"
+                                                                    {...field}
                                                                 />
-                                                                <Button variant="outline" type="button">
-                                                                    <Plus className="h-4 w-4 mr-2" />
-                                                                    Add
-                                                                </Button>
-                                                            </div>
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="question.type"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Type</FormLabel>
+                                                                <FormControl>
+                                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Select question type" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="Short Answer">Short Answer</SelectItem>
+                                                                            <SelectItem value="Multiple Choice">Multiple Choice</SelectItem>
+                                                                            <SelectItem value="True/False">True/False</SelectItem>
+                                                                            <SelectItem value="Essay">Essay</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="question.topic"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Topic</FormLabel>
+                                                                <FormControl>
+                                                                    <Input placeholder="Enter topic" {...field} />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="question.difficulty"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Difficulty</FormLabel>
+                                                                <FormControl>
+                                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Select difficulty" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="Easy">Easy</SelectItem>
+                                                                            <SelectItem value="Medium">Medium</SelectItem>
+                                                                            <SelectItem value="Hard">Hard</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </div>
+
+                                                <FormField
+                                                    control={form.control}
+                                                    name="question.correctAnswer"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Correct Answer</FormLabel>
+                                                            <FormControl>
+                                                                <Textarea
+                                                                    placeholder="Enter the correct answer"
+                                                                    className="min-h-[60px]"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+
+                                                <FormField
+                                                    control={form.control}
+                                                    name="question.explanation"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Explanation</FormLabel>
+                                                            <FormControl>
+                                                                <Textarea
+                                                                    placeholder="Explain why this is the correct answer"
+                                                                    className="min-h-[80px]"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
                                                         </FormItem>
                                                     )}
                                                 />
                                             </CardContent>
                                         </Card>
-
+                                    </div>
+                                </TabsContent>
+                                <TabsContent value="preview">
+                                    <div className="mt-4">
                                         <Card>
                                             <CardHeader>
-                                                <CardTitle>Related Resources</CardTitle>
+                                                <CardTitle className="flex items-center gap-2">
+                                                    <Eye className="h-5 w-5" />
+                                                    Content Preview
+                                                </CardTitle>
                                             </CardHeader>
                                             <CardContent>
                                                 <div className="space-y-4">
-                                                    {unit.relatedResources.map((resource, i) => {
-                                                        const Icon = getContentTypeIcon(resource.type);
-                                                        return (
-                                                            <div key={i} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg">
-                                                                <Icon className="h-4 w-4 text-muted-foreground" />
-                                                                <span className="flex-1">{resource.title}</span>
-                                                                <Button variant="ghost" size="icon" className="h-8 w-8" type="button">
-                                                                    <X className="h-4 w-4" />
-                                                                </Button>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                    <Button variant="outline" className="w-full">
-                                                        <Plus className="h-4 w-4 mr-2" />
-                                                        Add Related Resource
-                                                    </Button>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </TabsContent>
+                                                    <div className="p-4 bg-muted/20 rounded-lg">
+                                                        <h4 className="font-medium mb-3">Content:</h4>
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="content"
+                                                            render={({ field }) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Learning Content</FormLabel>
+                                                                    <FormControl>
+                                                                        {form.watch('contentType') === 'video' ? (
+                                                                            <div className="space-y-4">
+                                                                                <div className="aspect-video bg-black rounded-lg flex items-center justify-center">
+                                                                                    <div className="text-white text-center p-6">
+                                                                                        <Video className="h-12 w-12 mx-auto mb-4" />
+                                                                                        <h3 className="text-xl font-semibold">Video Content</h3>
+                                                                                        <p className="text-muted-foreground">
+                                                                                            Video URL or upload would go here
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <Input
+                                                                                    placeholder="Enter video URL or upload file"
+                                                                                    {...field}
+                                                                                />
+                                                                            </div>
+                                                                        ) : form.watch('contentType') === 'image' ? (
+                                                                            <div className="space-y-4">
+                                                                                <div className="border rounded-lg p-4 bg-muted/20 flex flex-col items-center justify-center min-h-[200px]">
+                                                                                    {loading &&
+                                                                                        <ImageIcon className="h-24 w-24 text-muted-foreground mx-auto" />
+                                                                                    }
+                                                                                    <img
+                                                                                        onLoad={() => setLoading(false)}
+                                                                                        loading='lazy'
+                                                                                        src={field.value}
+                                                                                    />
+                                                                                </div>
+                                                                                <Input
+                                                                                    {...field}
+                                                                                    disabled
+                                                                                    placeholder="Enter image URL or upload file"
+                                                                                />
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div
+                                                                                dangerouslySetInnerHTML={{ __html: field.value }}
+                                                                            >
 
-                                <TabsContent value="attachments" className="mt-6">
-                                    <div className="space-y-4">
-                                        {unit.attachments && unit.attachments.length > 0 ? (
-                                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                                {unit.attachments.map((file, index) => (
-                                                    <Card key={index} className="hover:shadow-md transition-shadow">
-                                                        <CardContent className="p-4 flex items-center gap-4">
-                                                            <div className="bg-muted/20 p-3 rounded-lg">
-                                                                <FileText className="h-6 w-6" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                <h4 className="font-medium truncate">{file.name}</h4>
-                                                                <p className="text-muted-foreground text-sm">{file.size}</p>
-                                                            </div>
-                                                            <Button variant="ghost" size="icon">
-                                                                <Trash2 className="h-4 w-4 text-destructive" />
-                                                            </Button>
-                                                        </CardContent>
-                                                    </Card>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
-                                                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-                                                <h4 className="text-lg font-medium mb-2">No Attachments</h4>
-                                                <p className="text-muted-foreground text-center mb-4">
-                                                    Upload files to supplement this learning unit
-                                                </p>
-                                                <Button variant="outline">
-                                                    <Upload className="h-4 w-4 mr-2" />
-                                                    Upload Files
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </TabsContent>
-
-                                <TabsContent value="settings" className="mt-6">
-                                    <div className="space-y-6">
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Publishing Options</CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <h4 className="font-medium">Make publicly available</h4>
-                                                        <p className="text-muted-foreground text-sm">
-                                                            Allow all users to access this content
-                                                        </p>
-                                                    </div>
-                                                    <Switch />
-                                                </div>
-
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <h4 className="font-medium">Allow comments</h4>
-                                                        <p className="text-muted-foreground text-sm">
-                                                            Let students ask questions and discuss
-                                                        </p>
-                                                    </div>
-                                                    <Switch />
-                                                </div>
-
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <h4 className="font-medium">Enable downloads</h4>
-                                                        <p className="text-muted-foreground text-sm">
-                                                            Allow students to download content
-                                                        </p>
-                                                    </div>
-                                                    <Switch defaultChecked />
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Advanced Settings</CardTitle>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <div className="space-y-4">
-                                                    <div>
-                                                        <h4 className="font-medium mb-2">Completion Criteria</h4>
-                                                        <Select>
-                                                            <SelectTrigger className="w-[280px]">
-                                                                <SelectValue placeholder="Select completion criteria" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="view">View content</SelectItem>
-                                                                <SelectItem value="quiz">Pass associated quiz</SelectItem>
-                                                                <SelectItem value="both">Both view and quiz</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
+                                                                            </div>
+                                                                        )}
+                                                                    </FormControl>
+                                                                    <FormMessage />
+                                                                </FormItem>
+                                                            )}
+                                                        />
                                                     </div>
 
-                                                    <div>
-                                                        <h4 className="font-medium mb-2">Prerequisites</h4>
-                                                        <Select>
-                                                            <SelectTrigger className="w-[280px]">
-                                                                <SelectValue placeholder="Select prerequisite content" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {learningUnits
-                                                                    .filter(u => u.id !== id)
-                                                                    .map(unit => (
-                                                                        <SelectItem key={unit.id} value={unit.id}>
-                                                                            {unit.title}
-                                                                        </SelectItem>
-                                                                    ))
-                                                                }
-                                                            </SelectContent>
-                                                        </Select>
+                                                    {form.watch('explanation') && (
+                                                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                                            <h4 className="font-medium mb-2 text-blue-800">Explanation:</h4>
+                                                            <p className="text-blue-700">{form.watch('explanation')}</p>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="p-4 bg-muted/20 rounded-lg">
+                                                        <h4 className="font-medium mb-2">Content Details:</h4>
+                                                        <div className="space-y-1 text-sm text-muted-foreground">
+                                                            <p>Code: {form.watch('code')}</p>
+                                                            <p>Type: {form.watch('contentType')}</p>
+                                                            <p>Status: {form.watch('status')}</p>
+                                                            <p>Language: {form.watch('language')}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </CardContent>
@@ -608,4 +622,4 @@ export function ContentEditPage() {
             </Form>
         </div>
     );
-}
+}   

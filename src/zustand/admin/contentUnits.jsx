@@ -1,7 +1,6 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
-import { learningUnits } from "../../utls/admin";
+import { contentUnits } from "../../utils/admin";
 
-export const useContentStore = create(
-        
-);
+export const useContentStore = create((set, get) => ({
+    content: contentUnits,
+}));

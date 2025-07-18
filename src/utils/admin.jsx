@@ -6,29 +6,29 @@ export const contentUnits = [
         title: 'Introduction to Algebra',
         description: 'Basic algebraic concepts and operations',
         content: `
-      <h1>Chapter 1: Basic Concepts</h1>
+      <h2>Chapter 1: Basic Concepts</h2>
       <p>Algebra is a branch of mathematics dealing with symbols and the rules for manipulating those symbols.</p>
-      <h2>1.1 Variables and Constants</h2>
+      <h3>1.1 Variables and Constants</h3>
       <ul>
         <li><strong>Variable:</strong> A symbol (usually a letter) that represents a number that may change.</li>
         <li><strong>Constant:</strong> A fixed value that does not change.</li>
       </ul>
-      <h2>1.2 Expressions and Equations</h2>
+      <h3>1.2 Expressions and Equations</h3>
       <ul>
         <li><strong>Expression:</strong> A combination of variables, numbers and operations.</li>
         <li><strong>Equation:</strong> A statement that two expressions are equal.</li>
       </ul>
     `,
         contentType: 'html',
-        explanation: 'Covers the basics of algebra including variables, constants, expressions, and equations.',
         language: 'en',
+        explanation: 'This unit introduces algebraic concepts like variables, constants, expressions, and equations.',
         status: 'published',
-        questionsCount: 12,
+        questionsCount: 12, 
         studentsEnrolled: 45,
         createdAt: '2024-01-15',
         updatedAt: '2024-01-20',
         createdBy: 'Dr. Smith',
-        correct:"no",
+        tags: ["react", "hooks", "javascript"],
         attachments: [
             { name: 'Worksheet.pdf', type: 'pdf', size: '2.4 MB' },
             { name: 'Practice Problems.docx', type: 'doc', size: '1.8 MB' }
@@ -37,119 +37,156 @@ export const contentUnits = [
             { id: '2', title: 'Advanced Algebra Concepts', type: 'video' },
             { id: '4', title: 'Algebraic Equations Practice', type: 'text' }
         ],
+        totalReviews: 3,
         minimumReviews: 3,
-        totalRevies: 1,
-        reviewStatus: 'pending',
-        comments: [
+        reviewStatus: 'completed',
+        correct: 'yes',
+        questions: 
             {
-                id: '1',
-                user: 'Reviewer A',
-                text: 'Clear and well-structured question.',
-                type: 'approved',
-                createdAt: '2024-01-16'
-            }
-        ]
+                id: 'q1',
+                question: 'What is a variable in algebra?',
+                type: 'Short Answer',
+                topic: 'variables',
+                difficulty: 'Easy',
+                correctAnswer: 'A symbol that represents a number that can change.',
+                explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
+                reviewStatus: 'approved',
+                createdBy: 'Dr. Smith',
+                createdAt: '2024-01-15'
+            },
     },
     {
         id: '2',
-        code: 'MATH-102',
-        title: 'Linear Equations',
-        description: 'Solving and graphing linear equations',
+        code: 'MATH-201',
+        title: 'அலகு: சமமான கோணங்கள்',
+        description: 'இந்த அலகில் கோணங்களின் அடிப்படைப் புரிதலைக் கற்றுக்கொள்கிறோம்.',
         content: `
-      <h1>Chapter 2: Linear Equations</h1>
-      <p>Linear equations form the foundation of algebra and represent relationships with a constant rate of change.</p>
-      <h2>2.1 Standard Form</h2>
+      <h2>அத்தியாயம் 1: கோணங்கள்</h2>
+      <p>கோணம் என்பது இரண்டு ரேகைகள் சந்திக்கும் இடத்தில் உருவாகும்.</p>
+      <h3>1.1 கோண வகைகள்</h3>
       <ul>
-        <li>Ax + By = C, where A, B, and C are real numbers.</li>
-      </ul>
-      <h2>2.2 Slope-Intercept Form</h2>
-      <ul>
-        <li>y = mx + b, where m is the slope and b is the y-intercept.</li>
-      </ul>
-      <h2>2.3 Graphing</h2>
-      <ul>
-        <li>Plotting the y-intercept and using the slope to find other points.</li>
+        <li>குறுகிய கோணம்</li>
+        <li>நீளமான கோணம்</li>
       </ul>
     `,
         contentType: 'html',
-        explanation: 'Introduces forms of linear equations and how to graph them using slope and intercept.',
-        language: 'en',
-        status: 'draft',
-        questionsCount: 9,
-        studentsEnrolled: 32,
+        language: 'ta',
+        explanation: 'This unit teaches the basics of angles and their types in Tamil.',
+        status: 'rejected',
+        questionsCount: 8,
+        studentsEnrolled: 38,
         createdAt: '2024-02-01',
-        updatedAt: '2024-02-05',
-        createdBy: 'Prof. Allen',
-        attachments: [
-            { name: 'Graphing Worksheet.pdf', type: 'pdf', size: '1.2 MB' }
-        ],
-        relatedResources: [
-            { id: '3', title: 'Graphing Lines Tutorial', type: 'video' }
-        ],
+        updatedAt: '2024-02-04',
+        createdBy: 'Dr. Kumar',
+        tags: ["react", "hooks", "javascript"],
+        attachments: [],
+        relatedResources: [],
+        totalRevies: 3,
         minimumReviews: 3,
-        totalRevies: 0,
-        correct:"no",
-        reviewStatus: 'pending',
-        comments: []
+        reviewStatus: 'completed',
+        correct: 'no',
+        questions: 
+            {
+                id: 'q3',
+                question: 'கோணம் என்றால் என்ன?',
+                type: 'Short Answer',
+                topic: 'angles',
+                difficulty: 'Easy',
+                correctAnswer: 'இரண்டு ரேகைகள் சந்திக்கும் இடத்தில் உருவாகும் வடிவம்.',
+                explanation: 'An angle is formed at the intersection of two lines.',
+                reviewStatus: 'pending',
+                createdBy: 'Dr. Kumar',
+                createdAt: '2024-02-01'
+            }
     },
     {
         id: '3',
-        code: 'MATH-103',
-        title: 'Quadratic Equations',
-        description: 'Understanding and solving quadratic equations',
+        code: 'MATH-301',
+        title: 'त्रिकोणमिति का परिचय',
+        description: 'त्रिकोणों और उनके अनुपातों की मूल बातें।',
         content: `
-      <h1>Chapter 3: Quadratic Equations</h1>
-      <p>Quadratic equations involve terms up to the second degree and are solved using various methods.</p>
-      <h2>3.1 Standard Form</h2>
+      <h2>अध्याय 1: त्रिकोणमिति</h2>
+      <p>त्रिकोणमिति गणित की वह शाखा है जिसमें कोणों और त्रिकोणों का अध्ययन किया जाता है।</p>
+      <h3>1.1 प्रमुख अनुपात</h3>
       <ul>
-        <li>ax² + bx + c = 0, where a, b, and c are real numbers and a ≠ 0.</li>
-      </ul>
-      <h2>3.2 Solving Methods</h2>
-      <ul>
-        <li>Factoring</li>
-        <li>Completing the square</li>
-        <li>Quadratic formula</li>
-      </ul>
-      <h2>3.3 Discriminant</h2>
-      <ul>
-        <li>b² - 4ac determines the nature of the roots.</li>
+        <li>साइन (sin)</li>
+        <li>कोसाइन (cos)</li>
+        <li>टैन्जेंट (tan)</li>
       </ul>
     `,
         contentType: 'html',
-        explanation: 'Focuses on the structure of quadratic equations and the different methods used to solve them.',
-        language: 'en',
-        status: 'published',
-        questionsCount: 14,
-        studentsEnrolled: 39,
-        createdAt: '2024-03-10',
-        updatedAt: '2024-03-15',
-        createdBy: 'Ms. Kapoor',
+        language: 'hi',
+        explanation: 'This unit introduces trigonometry and its basic ratios in Hindi.',
+        status: 'Review Pending',
+        questionsCount: 10,
+        studentsEnrolled: 41,
+        createdAt: '2024-03-01',
+        updatedAt: '2024-03-04',
+        createdBy: 'Dr. Mehta',
         attachments: [
-            { name: 'Quadratic Exercises.pdf', type: 'pdf', size: '2.1 MB' }
+            { name: 'Ratios Chart.pdf', type: 'pdf', size: '1.2 MB' }
+        ],
+        tags: ["react", "hooks", "javascript"],
+        relatedResources: [],
+        totalRevies: 2,
+        minimumReviews: 3,
+        reviewStatus: 'pending',
+        correct: 'yes',
+        questions: 
+            {
+                id: 'q4',
+                question: 'त्रिकोणमिति में साइन क्या दर्शाता है?',
+                type: 'Short Answer',
+                topic: 'trigonometry',
+                difficulty: 'Medium',
+                correctAnswer: 'विपरीत भुजा और कर्ण का अनुपात',
+                explanation: 'In trigonometry, sine is the ratio of the opposite side to the hypotenuse.',
+                reviewStatus: 'approved',
+                createdBy: 'Dr. Mehta',
+                createdAt: '2024-03-01'
+            }
+    },
+    {
+        id: '4',
+        code: 'MATH-101',
+        title: 'Introduction to Algebra',
+        description: 'Basic algebraic concepts and operations',
+        content : "https://tse2.mm.bing.net/th/id/OIP.Sr9x3mKM_6ch6Jk-5n4BbQHaE1?pid=Api&P=0&h=180",
+        contentType: 'image',
+        language: 'en',
+        explanation: 'This unit introduces algebraic concepts like variables, constants, expressions, and equations.',
+        status: 'Review Completed',
+        questionsCount: 12,
+        studentsEnrolled: 45,
+        createdAt: '2024-01-15',
+        updatedAt: '2024-01-20',
+        createdBy: 'Dr. Smith',
+        tags: ["react", "hooks", "javascript"],
+        attachments: [
+            { name: 'Worksheet.pdf', type: 'pdf', size: '2.4 MB' },
+            { name: 'Practice Problems.docx', type: 'doc', size: '1.8 MB' }
         ],
         relatedResources: [
-            { id: '5', title: 'Quadratic Formula Explained', type: 'text' }
+            { id: '2', title: 'Advanced Algebra Concepts', type: 'video' },
+            { id: '4', title: 'Algebraic Equations Practice', type: 'text' }
         ],
+        totalReviews: 3,
         minimumReviews: 3,
-        totalRevies: 3,
-        correct: "yes",
         reviewStatus: 'completed',
-        comments: [
-            {
-                id: '2',
-                user: 'Reviewer B',
-                text: 'Consider adding a real-world example.',
-                type: 'suggestion',
-                createdAt: '2024-03-16'
-            },
-            {
-                id: '3',
-                user: 'Reviewer C',
-                text: 'Typo in the discriminant explanation.',
-                type: 'flagged',
-                createdAt: '2024-03-17'
-            }
-        ]
+        correct: 'yes',
+        questions:
+        {
+            id: 'q1',
+            question: 'What is a variable in algebra?',
+            type: 'Short Answer',
+            topic: 'variables',
+            difficulty: 'Easy',
+            correctAnswer: 'A symbol that represents a number that can change.',
+            explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
+            reviewStatus: 'approved',
+            createdBy: 'Dr. Smith',
+            createdAt: '2024-01-15'
+        },
     }
 ];
 
@@ -389,8 +426,6 @@ export const questionBank = [
     },
 ];
 
-export const reviews = [...contentUnits, ...questionBank];
-
 export const learningUnits = [
         {
             id: "1",
@@ -422,6 +457,115 @@ export const learningUnits = [
             fileSize: "3.8 MB",
             status: "draft"
         },
+];
+
+export const reviews = [
+    {
+        id: '1',
+        question: 'What is the chemical formula for water?',
+        type: 'MCQ',
+        kind: 'passage',
+        unit: 'Chemistry Basics',
+        topic: 'Molecular Formulas',
+        options: ['H2O', 'CO2', 'NaCl', 'CH4'],
+        correctAnswer: 'A',
+        explanation: 'Water consists of two hydrogen atoms and one oxygen atom.',
+        submittedBy: 'Content Creator A',
+        submittedAt: '2024-01-20',
+        priority: 'medium',
+        reviewsCompleted: 1,
+        reviewsNeeded: 3,
+        existingReviews: [
+            {
+                reviewer: 'Reviewer B',
+                status: 'approved',
+                comment: 'Clear and accurate question.',
+                timestamp: '2024-01-21',
+            },
+        ],
+        reviewStatus: 'pending',
+    },
+    {
+        id: '2',
+        question: 'Explain the process of photosynthesis in detail.',
+        type: 'Long Answer',
+        kind: 'question bank',
+        unit: 'Biology Fundamentals',
+        topic: 'Plant Biology',
+        correctAnswer:
+            'Photosynthesis is the process by which plants convert sunlight, carbon dioxide, and water into glucose and oxygen...',
+        explanation:
+            'This process occurs in chloroplasts and involves light-dependent and light-independent reactions.',
+        submittedBy: 'Dr. Smith',
+        submittedAt: '2024-01-19',
+        priority: 'high',
+        reviewsCompleted: 0,
+        reviewsNeeded: 3,
+        existingReviews: [],
+        reviewStatus: 'pending',
+    },
+    {
+        id: '3',
+        question: 'Solve: ∫(2x + 3)dx',
+        type: 'Short Answer',
+        kind: 'question bank',
+        unit: 'Advanced Mathematics',
+        topic: 'Calculus',
+        correctAnswer: 'x² + 3x + C',
+        explanation: 'Using the power rule of integration: ∫2x dx = x² and ∫3 dx = 3x',
+        submittedBy: 'Prof. Johnson',
+        submittedAt: '2024-01-18',
+        priority: 'low',
+        reviewsCompleted: 2,
+        reviewsNeeded: 3,
+        existingReviews: [
+            {
+                reviewer: 'Reviewer A',
+                status: 'approved',
+                comment: 'Mathematical notation is correct.',
+                timestamp: '2024-01-19',
+            },
+            {
+                reviewer: 'Reviewer C',
+                status: 'needs_edit',
+                comment: 'Consider adding step-by-step solution.',
+                timestamp: '2024-01-20',
+            },
+        ],
+        reviewStatus: 'pending',
+    },
+    {
+        id: '4',
+        question: 'What is the capital of France?',
+        type: 'MCQ',
+        kind: 'passage',
+        unit: 'World Geography',
+        reviewedAt: '2024-01-15',
+        finalStatus: 'approved',
+        myReview: 'approved',
+        myComment: 'Straightforward geography question.',
+        reviewStatus: 'completed',
+        existingReviews: [
+            {
+                reviewer: 'Reviewer B',
+                status: 'approved',
+                comment: 'Clear and accurate question.',
+                timestamp: '2024-01-21',
+            },
+        ],
+    },
+    {
+        id: '5',
+        question: 'Describe the causes of World War I.',
+        type: 'Long Answer',
+        kind: 'question bank',
+        unit: 'Modern History',
+        reviewedAt: '2024-01-12',
+        finalStatus: 'needs_revision',
+        myReview: 'needs_edit',
+        myComment: 'Question needs more specific focus. Too broad as written.',
+        reviewStatus: 'completed',
+    },
 ];
 
 export const learningUnitsLength = learningUnits.length;

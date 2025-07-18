@@ -146,16 +146,16 @@ export function AdminDashboard() {
             <Button
               variant="outline"
               className="justify-start h-auto p-4"
-              onClick={() => navigate('/users')}
+              onClick={() => navigate('/question-bank')}
             >
               <div className="flex items-center gap-3">
                 <div className="bg-secondary/10 p-2 rounded-lg">
                   <Users className="h-4 w-4 text-secondary" />
                 </div>
                 <div className="text-left">
-                  <div className="font-medium">Manage Users</div>
+                  <div className="font-medium">Manage QuestionBank</div>
                   <div className="text-sm text-muted-foreground">
-                    Add reviewers and students
+                  Create and add questions
                   </div>
                 </div>
               </div>
