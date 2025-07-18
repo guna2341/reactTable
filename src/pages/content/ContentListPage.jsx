@@ -4,6 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { 
   Search, 
   Filter, 
@@ -22,7 +33,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useContentStore } from '../../zustand/admin/contentUnits';
+import { useAdminContentStore } from '../../zustand/admin/contentUnits';
 
 export function ContentListPage() {
   const navigate = useNavigate();
@@ -30,7 +41,14 @@ export function ContentListPage() {
   const [languageFilter, setLanguageFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const contentUnits = useContentStore(state => state.content);
+  const contentUnits = useAdminContentStore(state => state.content);
+  const deleteContent = useAdminContentStore(state => state.deleteContent);
+
+  function handleDeleteUnit(action,id) { 
+    if (action === "delete") {
+      deleteContent(id);
+    }
+  };
 
   const getContentTypeIcon = (type) => {
     switch (type) {
@@ -50,9 +68,10 @@ export function ContentListPage() {
 
   const getStatusColor = (status) => {
     switch (status) {
+      case 'approved':
       case 'published':
         return 'bg-success/10 text-success';
-      case 'Review Pending':
+      case 'pending':
         return 'bg-warning/10 text-warning';
       case 'rejected':
         return 'bg-destructive/10 text-destructive'; 
@@ -63,9 +82,10 @@ export function ContentListPage() {
 
   const getStatusIcon = (status) => {
     switch (status) {
+      case 'approved':
       case 'published':
         return CheckCircle;
-      case 'Review Pending':
+      case 'pending':
         return Clock;
       case 'rejected':
         return XCircle;
@@ -140,9 +160,9 @@ export function ContentListPage() {
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="published">Published</SelectItem>
-                  <SelectItem value="Review Pending">In Review</SelectItem>
+                  <SelectItem value="pending">In Review</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
-                  <SelectItem value="Review Completed">Completed</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
                 </SelectContent>
               </Select>
             </div>  
@@ -151,7 +171,7 @@ export function ContentListPage() {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card className="bg-gradient-card border-0 shadow-soft">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -186,17 +206,6 @@ export function ContentListPage() {
           </CardContent>
         </Card>
         
-        <Card className="bg-gradient-card border-0 shadow-soft">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-accent" />
-              <span className="text-sm font-medium">Total Students</span>
-            </div>
-            <p className="text-2xl font-bold mt-1">
-              {contentUnits.reduce((acc, unit) => acc + unit.studentsEnrolled, 0)}
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Units List */}
@@ -249,10 +258,33 @@ export function ContentListPage() {
                       <Edit className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
+                   
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Delete
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Unit</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this content unit?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteUnit('delete',unit.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
                   </div>
                 </div>
               </CardContent>
