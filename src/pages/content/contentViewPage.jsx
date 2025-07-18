@@ -36,38 +36,36 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { useContentStore } from '../../zustand/admin/contentUnits';
+import { useAdminContentStore } from '../../zustand/admin/contentUnits';
 
 // Your actual data structure
 export function ContentViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [adminAction, setAdminAction] = useState(null);
-
-    const contentUnits = useContentStore(state => state.content);
+    const contentUnits = useAdminContentStore(state => state.content);
     // Use the mock data instead of Zustand store
     const unit = contentUnits.find(u => u.id === id);
+    const [status, setStatus] = useState(unit.status);
 
     // Mock admin check - in real app, this would come from user context/auth
     const isAdmin = true;
 
     const handleAdminAction = (action) => {
-        // In a real app, this would be an API call
         console.log(`Admin ${action} content unit ${id}`);
-
-        // Update the unit status (in a real app, this would update the store/database)
         if (action === 'approve') {
+            setStatus("approved");
             unit.status = 'published';
             unit.correct = 'yes';
             unit.reviewStatus = 'completed';
         } else if (action === 'reject') {
+            setStatus("rejected");
             unit.status = 'rejected';
             unit.correct = 'no';
+            unit.totalReviews = 0;
             unit.reviewStatus = 'rejected';
         }
-
         setAdminAction(null);
-        // You might want to show a toast notification here
     };
 
     if (!unit) {
@@ -95,33 +93,45 @@ export function ContentViewPage() {
         }
     };
 
-    const getReviewStatusBadge = () => {
+    function getColor(status) {
+        switch (status) {
+            case 'approved':
+            case 'published':
+                return "bg-green-100 text-green-800";
+            case 'pending':
+                return "bg-yellow-100 text-yellow-800"
+            case 'rejected':
+                return "bg-red-100 text-red-800"
+            default:
+                return "bg-gray-100 text-gray-800"
+        } 
+    }
 
-        if (unit?.reviewStatus == "completed") {
-            if (unit?.correct == "yes") {
-                return (
-                    <Badge className="bg-green-100 text-green-800">
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        Approved
-                    </Badge>
-                );
-            } else {
-                return (
-                    <Badge className="bg-red-100 text-red-800">
-                        <XCircle className="h-4 w-4 mr-1" />
-                        Rejected
-                    </Badge>
-                );
-            }
-        } else {
-            return (
-                <Badge className="bg-yellow-100 text-yellow-800">
-                    <Clock className="h-4 w-4 mr-1" />
-                    Pending ({unit.totalRevies}/{unit.minimumReviews} reviews)
-                </Badge>
-            );
+    function getIcon(status) {
+        switch (status) {
+            case 'approved':
+            case 'published':
+                return <CheckCircle className="h-4 w-4 mr-1" />;
+            case 'pending':
+                return <Clock className="h-4 w-4 mr-1" />
+            case 'rejected':
+                return <XCircle className="h-4 w-4 mr-1" />;
+            default:
+                return "bg-gray-100 text-gray-800"
+        }
+    }
+
+    const getReviewStatusBadge = (status) => {
+        switch (status) {
+            case 'approved':
+            case 'published':
+            case 'pending':
+            case 'rejected':
+            default:
         }
     };
+
+    // In your JSX:
 
     const renderContent = () => {
         switch (unit.contentType) {
@@ -174,7 +184,10 @@ export function ContentViewPage() {
                 </Button>
 
                 <div className="flex gap-2">
-                    {getReviewStatusBadge()}
+                        <Badge className={getColor(status)}>
+                            {getIcon(status)}
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                        </Badge>
 
                     {/* Admin Actions */}
                     {isAdmin && (
@@ -232,8 +245,7 @@ export function ContentViewPage() {
                             </AlertDialog>
                         </div>
                     )}
-                    {unit.reviewStatus != "completed" &&
-
+                    {unit.status == "pending" &&
                         <Button variant="outline" onClick={() => navigate(`/reviews`)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Review
@@ -308,9 +320,6 @@ export function ContentViewPage() {
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className='pl-2 pb-4 mb-6 border-b'>
-                                            {renderContent()}
-                                        </div>
                                         {unit.questions ? (
                                             <div className="space-y-4">
                                                 <div className="p-4 bg-muted/20 rounded-lg">
@@ -356,11 +365,11 @@ export function ContentViewPage() {
                                                         <p>Created at: {unit.questions.createdAt}</p>
                                                         <p>Review Status:
                                                             <Badge variant="outline" className={
-                                                                unit.questions.reviewStatus === 'approved' ? 'bg-green-100 text-green-800 ml-2' :
-                                                                    unit.questions.reviewStatus === 'pending' ? 'bg-yellow-100 text-yellow-800 ml-2' :
+                                                                unit.status === 'approved' ? 'bg-green-100 text-green-800 ml-2' :
+                                                                    unit.status === 'pending' ? 'bg-yellow-100 text-yellow-800 ml-2' :
                                                                         'bg-red-100 text-red-800 ml-2'
                                                             }>
-                                                                {unit.questions.reviewStatus}
+                                                                {unit.status}
                                                             </Badge>
                                                         </p>
                                                     </div>

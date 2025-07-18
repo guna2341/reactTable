@@ -23,24 +23,12 @@ export const contentUnits = [
         language: 'en',
         explanation: 'This unit introduces algebraic concepts like variables, constants, expressions, and equations.',
         status: 'published',
-        questionsCount: 12, 
-        studentsEnrolled: 45,
         createdAt: '2024-01-15',
         updatedAt: '2024-01-20',
         createdBy: 'Dr. Smith',
         tags: ["react", "hooks", "javascript"],
-        attachments: [
-            { name: 'Worksheet.pdf', type: 'pdf', size: '2.4 MB' },
-            { name: 'Practice Problems.docx', type: 'doc', size: '1.8 MB' }
-        ],
-        relatedResources: [
-            { id: '2', title: 'Advanced Algebra Concepts', type: 'video' },
-            { id: '4', title: 'Algebraic Equations Practice', type: 'text' }
-        ],
         totalReviews: 3,
         minimumReviews: 3,
-        reviewStatus: 'completed',
-        correct: 'yes',
         questions: 
             {
                 id: 'q1',
@@ -50,9 +38,6 @@ export const contentUnits = [
                 difficulty: 'Easy',
                 correctAnswer: 'A symbol that represents a number that can change.',
                 explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
-                reviewStatus: 'approved',
-                createdBy: 'Dr. Smith',
-                createdAt: '2024-01-15'
             },
     },
     {
@@ -79,8 +64,6 @@ export const contentUnits = [
         updatedAt: '2024-02-04',
         createdBy: 'Dr. Kumar',
         tags: ["react", "hooks", "javascript"],
-        attachments: [],
-        relatedResources: [],
         totalRevies: 3,
         minimumReviews: 3,
         reviewStatus: 'completed',
@@ -94,7 +77,6 @@ export const contentUnits = [
                 difficulty: 'Easy',
                 correctAnswer: 'இரண்டு ரேகைகள் சந்திக்கும் இடத்தில் உருவாகும் வடிவம்.',
                 explanation: 'An angle is formed at the intersection of two lines.',
-                reviewStatus: 'pending',
                 createdBy: 'Dr. Kumar',
                 createdAt: '2024-02-01'
             }
@@ -117,17 +99,13 @@ export const contentUnits = [
         contentType: 'html',
         language: 'hi',
         explanation: 'This unit introduces trigonometry and its basic ratios in Hindi.',
-        status: 'Review Pending',
+        status: 'pending',
         questionsCount: 10,
         studentsEnrolled: 41,
         createdAt: '2024-03-01',
         updatedAt: '2024-03-04',
         createdBy: 'Dr. Mehta',
-        attachments: [
-            { name: 'Ratios Chart.pdf', type: 'pdf', size: '1.2 MB' }
-        ],
         tags: ["react", "hooks", "javascript"],
-        relatedResources: [],
         totalRevies: 2,
         minimumReviews: 3,
         reviewStatus: 'pending',
@@ -141,7 +119,6 @@ export const contentUnits = [
                 difficulty: 'Medium',
                 correctAnswer: 'विपरीत भुजा और कर्ण का अनुपात',
                 explanation: 'In trigonometry, sine is the ratio of the opposite side to the hypotenuse.',
-                reviewStatus: 'approved',
                 createdBy: 'Dr. Mehta',
                 createdAt: '2024-03-01'
             }
@@ -155,21 +132,13 @@ export const contentUnits = [
         contentType: 'image',
         language: 'en',
         explanation: 'This unit introduces algebraic concepts like variables, constants, expressions, and equations.',
-        status: 'Review Completed',
+        status: 'approved',
         questionsCount: 12,
         studentsEnrolled: 45,
         createdAt: '2024-01-15',
         updatedAt: '2024-01-20',
         createdBy: 'Dr. Smith',
         tags: ["react", "hooks", "javascript"],
-        attachments: [
-            { name: 'Worksheet.pdf', type: 'pdf', size: '2.4 MB' },
-            { name: 'Practice Problems.docx', type: 'doc', size: '1.8 MB' }
-        ],
-        relatedResources: [
-            { id: '2', title: 'Advanced Algebra Concepts', type: 'video' },
-            { id: '4', title: 'Algebraic Equations Practice', type: 'text' }
-        ],
         totalReviews: 3,
         minimumReviews: 3,
         reviewStatus: 'completed',
@@ -183,7 +152,6 @@ export const contentUnits = [
             difficulty: 'Easy',
             correctAnswer: 'A symbol that represents a number that can change.',
             explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
-            reviewStatus: 'approved',
             createdBy: 'Dr. Smith',
             createdAt: '2024-01-15'
         },
@@ -583,11 +551,6 @@ export const dashboardStats = [
         title: 'Total Questions',
         value: totalQuestions,
         change: '+12 this week',
-    },
-    {
-        title: 'Active Students',
-        value: activeStudents,
-        change: '+5 this week',
     },
     {
         title: 'Pending Reviews',

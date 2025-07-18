@@ -10,42 +10,43 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { FileUpload } from '@/components/ui/file-upload';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  ArrowLeft, 
-  Save, 
-  Plus, 
-  X, 
-  FileText, 
-  Video, 
+import {
+  ArrowLeft,
+  Save,
+  Plus,
+  X,
+  FileText,
+  Video,
   Image as ImageIcon,
-  BookOpen 
+  BookOpen,
+  HelpCircle
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAdminContentStore } from '../../zustand/admin/contentUnits';
 
 export function CreateContentPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+  const createContent = useAdminContentStore(state => state.createContent);
   const [formData, setFormData] = useState({
     code: '',
     title: '',
-    contentType: 'text',
+    contentType: 'html',
     content: '',
     language: 'en',
     description: '',
+    explanation:''
   });
-  
-  const [questions, setQuestions] = useState([
-    {
-      id: '1',
-      type: 'mcq',
-      question: '',
-      options: ['', '', '', ''],
-      correctAnswer: '',
-      explanation: '',
-    }
-  ]);
-  
+
+  const [question, setQuestion] = useState({
+    question: '',
+    type: 'Short Answer',
+    topic: '',
+    difficulty: 'Easy',
+    correctAnswer: '',
+    explanation: '',
+  });
+
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
   const handleContentChange = (content) => {
@@ -64,54 +65,59 @@ export function CreateContentPage() {
     }
   };
 
-  const addQuestion = () => {
-    const newQuestion = {
-      id: Date.now().toString(),
-      type: 'mcq',
-      question: '',
-      options: ['', '', '', ''],
-      correctAnswer: '',
-      explanation: '',
-    };
-    setQuestions([...questions, newQuestion]);
+  const updateQuestionField = (field, value) => {
+    setQuestion(prev => {
+      // When changing to Multiple Choice, initialize options if they don't exist
+      if (field === 'type' && value === 'Multiple Choice' && !prev.options) {
+        return { ...prev, [field]: value, options: ['', '', '', ''] };
+      }
+      return { ...prev, [field]: value };
+    });
   };
 
-  const removeQuestion = (id) => {
-    setQuestions(questions.filter(q => q.id !== id));
+  const updateQuestionOption = (optionIndex, value) => {
+    setQuestion(prev => ({
+      ...prev,
+      options: prev.options?.map((opt, idx) => idx === optionIndex ? value : opt)
+    }));
   };
 
-  const updateQuestion = (id, field, value) => {
-    setQuestions(questions.map(q => 
-      q.id === id ? { ...q, [field]: value } : q
-    ));
+  const addOption = () => {
+    setQuestion(prev => ({
+      ...prev,
+      options: [...(prev.options || []), '']
+    }));
   };
 
-  const updateQuestionOption = (questionId, optionIndex, value) => {
-    setQuestions(questions.map(q => 
-      q.id === questionId 
-        ? { ...q, options: q.options.map((opt, idx) => idx === optionIndex ? value : opt) }
-        : q
-    ));
+  const removeOption = (optionIndex) => {
+    setQuestion(prev => ({
+      ...prev,
+      options: prev.options?.filter((_, idx) => idx !== optionIndex),
+      // Reset correct answer if it was the removed option
+      correctAnswer: prev.correctAnswer === String.fromCharCode(65 + optionIndex)
+        ? ''
+        : prev.correctAnswer
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    setTimeout(() => {
+      createContent({
+        ...formData,
+        question: {
+          question: question.question,
+          type: question.type,
+          topic: question.topic,
+          difficulty: question.difficulty,
+          correctAnswer: question.correctAnswer,
+          ...(question.type === 'Multiple Choice' && { options: question.options })
+        }
+      });
+
       toast({
         title: 'Learning Unit Created!',
         description: `"${formData.title}" has been created successfully and sent for review.`,
       });
-      navigate('/content');
-    }, 1000);
-  };
-
-  const getContentTypeIcon = (type) => {
-    switch (type) {
-      case 'video': return Video;
-      case 'image': return ImageIcon;
-      default: return FileText;
-    }
   };
 
   return (
@@ -123,7 +129,7 @@ export function CreateContentPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Create Learning Unit</h1>
           <p className="text-muted-foreground">
-            Add new educational content with associated questions
+            Add new educational content with associated question
           </p>
         </div>
       </div>
@@ -152,10 +158,13 @@ export function CreateContentPage() {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="language">Language *</Label>
-                <Select value={formData.language} onValueChange={(value) => setFormData(prev => ({ ...prev, language: value }))}>
+                <Select
+                  value={formData.language}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, language: value }))}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -203,7 +212,7 @@ export function CreateContentPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {[
-                { type: 'text', label: 'Text Content', icon: FileText, desc: 'Written content with rich formatting' },
+                { type: 'html', label: 'Text Content', icon: FileText, desc: 'Written content with rich formatting' },
                 { type: 'video', label: 'Video Content', icon: Video, desc: 'Upload educational videos' },
                 { type: 'image', label: 'Image Content', icon: ImageIcon, desc: 'Visual learning materials' },
               ].map((option) => {
@@ -215,7 +224,7 @@ export function CreateContentPage() {
                     type="button"
                     variant={isSelected ? "default" : "outline"}
                     className="h-auto p-4 flex flex-col items-center gap-2"
-                    onClick={() => setFormData(prev => ({ ...prev, contentType: option.type}))}
+                    onClick={() => setFormData(prev => ({ ...prev, contentType: option.type }))}
                   >
                     <Icon className={`h-6 w-6 ${isSelected ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
                     <div className="text-center">
@@ -230,7 +239,7 @@ export function CreateContentPage() {
             </div>
 
             {/* Content Input Based on Type */}
-            {formData.contentType === 'text' && (
+            {formData.contentType === 'html' && (
               <div className="space-y-2">
                 <Label>Text Content *</Label>
                 <RichTextEditor
@@ -242,142 +251,200 @@ export function CreateContentPage() {
               </div>
             )}
 
-            {(formData.contentType === 'video' || formData.contentType === 'image') && (
+            {formData.contentType === 'video' && (
               <div className="space-y-2">
-                <Label>Upload {formData.contentType === 'video' ? 'Video' : 'Image'} *</Label>
+                <Label>Upload Video *</Label>
                 <FileUpload
                   onFileSelect={handleFileSelect}
-                  accept={formData.contentType === 'video' 
-                    ? { 'video/*': ['.mp4', '.webm', '.ogg'] }
-                    : { 'image/*': ['.jpg', '.jpeg', '.png', '.gif'] }
-                  }
-                  maxSize={formData.contentType === 'video' ? 100 * 1024 * 1024 : 10 * 1024 * 1024} // 100MB for video, 10MB for images
+                  accept={{ 'video/*': ['.mp4', '.webm', '.ogg'] }}
+                  maxSize={100 * 1024 * 1024} // 100MB
                 />
+                {uploadedFiles.length > 0 && (
+                  <div className="text-sm text-muted-foreground">
+                    Selected: {uploadedFiles[0].name}
+                  </div>
+                )}
               </div>
             )}
+
+            {formData.contentType === 'image' && (
+              <div className="space-y-2">
+                <Label>Upload Image *</Label>
+                <FileUpload
+                  onFileSelect={handleFileSelect}
+                  accept={{ 'image/*': ['.jpg', '.jpeg', '.png', '.gif'] }}
+                  maxSize={10 * 1024 * 1024} // 10MB
+                />
+                {uploadedFiles.length > 0 && (
+                  <div className="text-sm text-muted-foreground">
+                    Selected: {uploadedFiles[0].name}
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="space-y-2 mt-2">
+              <Label>Explanation</Label>
+              <Textarea
+                placeholder="Explain why this is the correct answer"
+                value={formData.explanation}
+                onChange={(e) => setFormData(p => ({...p,explanation:e.target.value}))}
+                rows={3}
+              />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Questions Section */}
+        {/* Question Section */}
         <Card className="bg-gradient-card border-0 shadow-soft">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Associated Questions</CardTitle>
-                <CardDescription>
-                  Add questions that students will answer after reviewing the content
-                </CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <HelpCircle className="h-5 w-5" />
+              Associated Question
+            </CardTitle>
+            <CardDescription>
+              Add the question that students will answer after reviewing the content
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Question Type</Label>
+                <Select
+                  value={question.type}
+                  onValueChange={(value) => updateQuestionField('type', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select question type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Short Answer">Short Answer</SelectItem>
+                    <SelectItem value="Long Answer">Long Answer</SelectItem>
+                    <SelectItem value="Multiple Choice">Multiple Choice</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Topic</Label>
+                <Input
+                  placeholder="Enter topic (e.g., variables)"
+                  value={question.topic}
+                  onChange={(e) => updateQuestionField('topic', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Difficulty</Label>
+                <Select
+                  value={question.difficulty}
+                  onValueChange={(value) => updateQuestionField('difficulty', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Easy">Easy</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Hard">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {questions.map((question, index) => (
-              <div key={question.id} className="border rounded-lg p-4 space-y-4">
+
+            <div className="space-y-2">
+              <Label>Question Text *</Label>
+              <Textarea
+                placeholder="Enter your question here..."
+                value={question.question}
+                onChange={(e) => updateQuestionField('question', e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            {question.type === 'Multiple Choice' && (
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Badge variant="outline">Question {index + 1}</Badge>
-                  {questions.length > 1 && (
+                  <Label>Answer Options</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addOption}
+                    disabled={question.options?.length >= 6}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add Option
+                  </Button>
+                </div>
+                {question.options?.map((option, optIndex) => (
+                  <div key={optIndex} className="flex items-center gap-2">
+                    <span className="text-sm font-medium w-6">
+                      {String.fromCharCode(65 + optIndex)}.
+                    </span>
+                    <Input
+                      placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
+                      value={option}
+                      onChange={(e) => updateQuestionOption(optIndex, e.target.value)}
+                      className="flex-1"
+                    />
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
-                      onClick={() => removeQuestion(question.id)}
+                      onClick={() => removeOption(optIndex)}
+                      disabled={question.options?.length <= 2}
                     >
                       <X className="h-4 w-4" />
                     </Button>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Question Type</Label>
-                    <Select 
-                      value={question.type} 
-                      onValueChange={(value) => updateQuestion(question.id, 'type', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="mcq">Multiple Choice (MCQ)</SelectItem>
-                        <SelectItem value="short_answer">Short Answer</SelectItem>
-                        <SelectItem value="long_answer">Long Answer</SelectItem>
-                        <SelectItem value="match_following">Match the Following</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
-                </div>
+                ))}
 
                 <div className="space-y-2">
-                  <Label>Question Text *</Label>
-                  <RichTextEditor
-                    content={question.question}
-                    onChange={(content) => updateQuestion(question.id, 'question', content)}
-                    placeholder="Enter your question here..."
-                  />
-                </div>
-
-                {question.type === 'mcq' && (
-                  <div className="space-y-3">
-                    <Label>Answer Options</Label>
-                    {question.options.map((option, optIndex) => (
-                      <div key={optIndex} className="flex items-center gap-2">
-                        <span className="text-sm font-medium w-8">{String.fromCharCode(65 + optIndex)}.</span>
-                        <Input
-                          placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
-                          value={option}
-                          onChange={(e) => updateQuestionOption(question.id, optIndex, e.target.value)}
-                        />
-                      </div>
-                    ))}
-                    
-                    <div className="space-y-2">
-                      <Label>Correct Answer</Label>
-                      <Select 
-                        value={question.correctAnswer}
-                        onValueChange={(value) => updateQuestion(question.id, 'correctAnswer', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select correct answer" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {question.options.map((_, optIndex) => (
-                            <SelectItem key={optIndex} value={String.fromCharCode(65 + optIndex)}>
-                              Option {String.fromCharCode(65 + optIndex)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                )}
-
-                {(question.type === 'short_answer' || question.type === 'long_answer') && (
-                  <div className="space-y-2">
-                    <Label>Expected Answer/Keywords</Label>
-                    <Textarea
-                      placeholder="Provide the expected answer or key points for evaluation"
-                      value={question.correctAnswer}
-                      onChange={(e) => updateQuestion(question.id, 'correctAnswer', e.target.value)}
-                      rows={question.type === 'long_answer' ? 4 : 2}
-                    />
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <Label>Explanation (Optional)</Label>
-                  <RichTextEditor
-                    content={question.explanation}
-                    onChange={(content) => updateQuestion(question.id, 'explanation', content)}
-                    placeholder="Provide an explanation for the correct answer..."
-                  />
+                  <Label>Correct Answer</Label>
+                  <Select
+                    value={question.correctAnswer}
+                    onValueChange={(value) => updateQuestionField('correctAnswer', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select correct answer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {question.options?.map((option, optIndex) => (
+                        option && (
+                          <SelectItem
+                            key={optIndex}
+                            value={String.fromCharCode(65 + optIndex)}
+                          >
+                            {String.fromCharCode(65 + optIndex)}. {option}
+                          </SelectItem>
+                        )
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            ))}
-            <div className='w-full flex justify-end'>
-            <Button type="button" onClick={addQuestion} variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Question
-              </Button>
+            )}
+
+            {(question.type === 'Short Answer' || question.type === 'Long Answer') && (
+              <div className="space-y-2">
+                <Label>Expected Answer</Label>
+                <Textarea
+                  placeholder="Provide the expected answer"
+                  value={question.correctAnswer}
+                  onChange={(e) => updateQuestionField('correctAnswer', e.target.value)}
+                  rows={question.type === 'Long Answer' ? 4 : 2}
+                />
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Explanation</Label>
+              <Textarea
+                placeholder="Explain why this is the correct answer"
+                value={question.explanation}
+                onChange={(e) => updateQuestionField('explanation', e.target.value)}
+                rows={3}
+              />
             </div>
           </CardContent>
         </Card>

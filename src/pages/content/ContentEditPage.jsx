@@ -39,9 +39,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
-import { useContentStore } from '../../zustand/admin/contentUnits';
+import { useAdminContentStore } from '../../zustand/admin/contentUnits';
 
 const formSchema = z.object({
+    id:z.string(),
     title: z.string().min(2, {
         message: "Title must be at least 2 characters.",
     }),
@@ -57,11 +58,12 @@ const formSchema = z.object({
     explanation: z.string().min(10, {
         message: "Explanation must be at least 10 characters.",
     }),
-    contentType: z.enum(['text', 'video', 'image']),
+    contentType: z.enum(['html', 'video', 'image']),
     language: z.enum(['en', 'hi', 'ta']),
     status: z.enum(['draft', 'review', 'published']),
     tags: z.array(z.string()).optional(),
     question: z.object({
+        id:z.string(),
         question: z.string().min(5, "Question must be at least 5 characters"),
         type: z.string().min(1, "Type is required"),
         topic: z.string().min(1, "Topic is required"),
@@ -76,12 +78,14 @@ export function ContentEditPage() {
     const navigate = useNavigate();
     const [newTag, setNewTag] = useState('');
     const [loading, setLoading] = useState(true);
-    const contentUnits = useContentStore(state => state.content);
+    const contentUnits = useAdminContentStore(state => state.content);
     const unit = contentUnits.find(u => u.id === id);
+    const editContent = useAdminContentStore(state => state.editContent);
 
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: unit ? {
+            id:unit.id,
             title: unit.title,
             code: unit.code,
             description: unit.description,
@@ -92,6 +96,7 @@ export function ContentEditPage() {
             status: unit.status,
             tags: unit.tags || [],
             question: unit.questions ? {
+                id:unit.questions.id,
                 question: unit.questions.question,
                 type: unit.questions.type,
                 topic: unit.questions.topic,
@@ -105,7 +110,7 @@ export function ContentEditPage() {
             description: '',
             content: '',
             explanation: '',
-            contentType: 'text',
+            contentType: 'html',
             language: 'en',
             status: 'draft',
             tags: [],
@@ -113,14 +118,12 @@ export function ContentEditPage() {
     });
 
     function onSubmit(values) {
-        console.log('Form submitted with values:', values);
+        editContent(values);
 
         toast({
             title: "Content updated successfully",
             description: `"${values.title}" has been saved.`,
         });
-
-        navigate(`/content/${id}`);
     }
 
     const handleAddTag = () => {
@@ -243,7 +246,7 @@ export function ContentEditPage() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="text">
+                                                        <SelectItem value="html">
                                                             <div className="flex items-center gap-2">
                                                                 <FileText className="h-4 w-4" />
                                                                 text
@@ -340,7 +343,6 @@ export function ContentEditPage() {
                                                                 </div>
                                                                 <Input
                                                                     placeholder="Enter video URL or upload file"
-                                                                    {...field}
                                                                 />
                                                             </div>
                                                         ) : form.watch('contentType') === 'image' ? (
@@ -357,7 +359,6 @@ export function ContentEditPage() {
                                                                 </div>
                                                                 <Input
                                                                     placeholder="Enter image URL or upload file"
-                                                                    {...field}
                                                                 />
                                                             </div>
                                                         ) : (
