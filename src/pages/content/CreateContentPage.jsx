@@ -268,10 +268,6 @@ export function CreateContentPage() {
                   Add questions that students will answer after reviewing the content
                 </CardDescription>
               </div>
-              <Button type="button" onClick={addQuestion} variant="outline">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Question
-              </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -377,6 +373,12 @@ export function CreateContentPage() {
                 </div>
               </div>
             ))}
+            <div className='w-full flex justify-end'>
+            <Button type="button" onClick={addQuestion} variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Question
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

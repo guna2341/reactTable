@@ -18,9 +18,11 @@ import {
   Users,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  XCircle
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useContentStore } from '../../zustand/admin/contentUnits';
 
 export function ContentListPage() {
   const navigate = useNavigate();
@@ -28,65 +30,7 @@ export function ContentListPage() {
   const [languageFilter, setLanguageFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Mock data for learning units
-  const learningUnits = [
-    {
-      id: '1',
-      code: 'MATH-101',
-      title: 'Introduction to Algebra',
-      description: 'Basic algebraic concepts and operations',
-      contentType: 'text',
-      language: 'en',
-      status: 'published',
-      questionsCount: 12,
-      studentsEnrolled: 45,
-      createdAt: '2024-01-15',
-      updatedAt: '2024-01-20',
-      createdBy: 'Dr. Smith'
-    },
-    {
-      id: '2',
-      code: 'SCI-201',
-      title: 'Water Cycle Explained',
-      description: 'Understanding the natural water cycle process',
-      contentType: 'video',
-      language: 'en',
-      status: 'review',
-      questionsCount: 8,
-      studentsEnrolled: 0,
-      createdAt: '2024-01-18',
-      updatedAt: '2024-01-18',
-      createdBy: 'Prof. Johnson'
-    },
-    {
-      id: '3',
-      code: 'LANG-301',
-      title: 'हिंदी व्याकरण मूल बातें',
-      description: 'Hindi grammar fundamentals and sentence structure',
-      contentType: 'text',
-      language: 'hi',
-      status: 'draft',
-      questionsCount: 15,
-      studentsEnrolled: 0,
-      createdAt: '2024-01-19',
-      updatedAt: '2024-01-19',
-      createdBy: 'Mrs. Sharma'
-    },
-    {
-      id: '4',
-      code: 'HIST-401',
-      title: 'Ancient Civilizations',
-      description: 'Overview of major ancient civilizations',
-      contentType: 'image',
-      language: 'en',
-      status: 'published',
-      questionsCount: 20,
-      studentsEnrolled: 67,
-      createdAt: '2024-01-10',
-      updatedAt: '2024-01-22',
-      createdBy: 'Dr. Williams'
-    }
-  ];
+  const contentUnits = useContentStore(state => state.content);
 
   const getContentTypeIcon = (type) => {
     switch (type) {
@@ -106,10 +50,12 @@ export function ContentListPage() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'review completed':
+      case 'published':
         return 'bg-success/10 text-success';
-      case 'review':
+      case 'Review Pending':
         return 'bg-warning/10 text-warning';
+      case 'rejected':
+        return 'bg-destructive/10 text-destructive'; 
       default:
         return 'bg-muted/10 text-muted-foreground';
     }
@@ -119,10 +65,10 @@ export function ContentListPage() {
     switch (status) {
       case 'published':
         return CheckCircle;
-      case 'review':
+      case 'Review Pending':
         return Clock;
-      case 'draft':
-        return AlertCircle;
+      case 'rejected':
+        return XCircle;
       default:
         return AlertCircle;
     }
@@ -136,7 +82,7 @@ export function ContentListPage() {
     }
   };
 
-  const filteredUnits = learningUnits.filter(unit => {
+  const filteredUnits = contentUnits.filter(unit => {
     const matchesSearch = unit.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          unit.code.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesLanguage = languageFilter === 'all' || unit.language === languageFilter;
@@ -194,15 +140,12 @@ export function ContentListPage() {
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="published">Published</SelectItem>
-                  <SelectItem value="review">In Review</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="Review Pending">In Review</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="Review Completed">Completed</SelectItem>
                 </SelectContent>
               </Select>
-
-              <Button variant="outline" size="icon">
-                <Filter className="h-4 w-4" />
-              </Button>
-            </div>
+            </div>  
           </div>
         </CardContent>
       </Card>
@@ -215,7 +158,7 @@ export function ContentListPage() {
               <BookOpen className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium">Total Units</span>
             </div>
-            <p className="text-2xl font-bold mt-1">{learningUnits.length}</p>
+            <p className="text-2xl font-bold mt-1">{contentUnits.length}</p>
           </CardContent>
         </Card>
         
@@ -226,7 +169,7 @@ export function ContentListPage() {
               <span className="text-sm font-medium">Published</span>
             </div>
             <p className="text-2xl font-bold mt-1">
-              {learningUnits.filter(u => u.status === 'published').length}
+              {contentUnits.filter(u => u.status === 'published').length}
             </p>
           </CardContent>
         </Card>
@@ -238,7 +181,7 @@ export function ContentListPage() {
               <span className="text-sm font-medium">In Review</span>
             </div>
             <p className="text-2xl font-bold mt-1">
-              {learningUnits.filter(u => u.status === 'review').length}
+              {contentUnits.filter(u => u.reviewStatus != "completed").length}
             </p>
           </CardContent>
         </Card>
@@ -250,7 +193,7 @@ export function ContentListPage() {
               <span className="text-sm font-medium">Total Students</span>
             </div>
             <p className="text-2xl font-bold mt-1">
-              {learningUnits.reduce((acc, unit) => acc + unit.studentsEnrolled, 0)}
+              {contentUnits.reduce((acc, unit) => acc + unit.studentsEnrolled, 0)}
             </p>
           </CardContent>
         </Card>
@@ -288,14 +231,6 @@ export function ContentListPage() {
                     <p className="text-muted-foreground text-sm mb-3">{unit.description}</p>
                     
                     <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <FileText className="h-4 w-4" />
-                        <span>{unit.questionsCount} questions</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        <span>{unit.studentsEnrolled} students</span>
-                      </div>
                       <div>
                         <span>By {unit.createdBy}</span>
                       </div>

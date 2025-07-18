@@ -36,199 +36,16 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useContentStore } from '../../zustand/admin/contentUnits';
 
-export const contentUnits = [
-    {
-        id: '1',
-        code: 'MATH-101',
-        title: 'Introduction to Algebra',
-        description: 'Basic algebraic concepts and operations',
-        content: `
-      <h1>Chapter 1: Basic Concepts</h1>
-      <p>Algebra is a branch of mathematics dealing with symbols and the rules for manipulating those symbols.</p>
-      <h2>1.1 Variables and Constants</h2>
-      <ul>
-        <li><strong>Variable:</strong> A symbol (usually a letter) that represents a number that may change.</li>
-        <li><strong>Constant:</strong> A fixed value that does not change.</li>
-      </ul>
-      <h2>1.2 Expressions and Equations</h2>
-      <ul>
-        <li><strong>Expression:</strong> A combination of variables, numbers and operations.</li>
-        <li><strong>Equation:</strong> A statement that two expressions are equal.</li>
-      </ul>
-    `,
-        contentType: 'html',
-        explanation: 'Covers the basics of algebra including variables, constants, expressions, and equations.',
-        language: 'en',
-        status: 'published',
-        questionsCount: 12,
-        studentsEnrolled: 45,
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-20',
-        createdBy: 'Dr. Smith',
-        correct: "no",
-        attachments: [
-            { name: 'Worksheet.pdf', type: 'pdf', size: '2.4 MB' },
-            { name: 'Practice Problems.docx', type: 'doc', size: '1.8 MB' }
-        ],
-        relatedResources: [
-            { id: '2', title: 'Advanced Algebra Concepts', type: 'video' },
-            { id: '4', title: 'Algebraic Equations Practice', type: 'text' }
-        ],
-        minimumReviews: 3,
-        totalRevies: 1,
-        reviewStatus: 'pending',
-        previewQuestion: {
-            question: "What is the difference between a variable and a constant in algebra?",
-            options: [
-                "A variable can change, a constant cannot",
-                "A constant can change, a variable cannot",
-                "Both can change values",
-                "Neither can change values"
-            ],
-            correctAnswer: 0,
-            explanation: "A variable is a symbol that represents a value that can change, while a constant is a fixed value that remains the same."
-        },
-        comments: [
-            {
-                id: '1',
-                user: 'Reviewer A',
-                text: 'Clear and well-structured question.',
-                type: 'approved',
-                createdAt: '2024-01-16'
-            }
-        ]
-    },
-    {
-        id: '2',
-        code: 'MATH-102',
-        title: 'Linear Equations',
-        description: 'Solving and graphing linear equations',
-        content: `
-      <h1>Chapter 2: Linear Equations</h1>
-      <p>Linear equations form the foundation of algebra and represent relationships with a constant rate of change.</p>
-      <h2>2.1 Standard Form</h2>
-      <ul>
-        <li>Ax + By = C, where A, B, and C are real numbers.</li>
-      </ul>
-      <h2>2.2 Slope-Intercept Form</h2>
-      <ul>
-        <li>y = mx + b, where m is the slope and b is the y-intercept.</li>
-      </ul>
-      <h2>2.3 Graphing</h2>
-      <ul>
-        <li>Plotting the y-intercept and using the slope to find other points.</li>
-      </ul>
-    `,
-        contentType: 'html',
-        explanation: 'Introduces forms of linear equations and how to graph them using slope and intercept.',
-        language: 'en',
-        status: 'draft',
-        questionsCount: 9,
-        studentsEnrolled: 32,
-        createdAt: '2024-02-01',
-        updatedAt: '2024-02-05',
-        createdBy: 'Prof. Allen',
-        attachments: [
-            { name: 'Graphing Worksheet.pdf', type: 'pdf', size: '1.2 MB' }
-        ],
-        relatedResources: [
-            { id: '3', title: 'Graphing Lines Tutorial', type: 'video' }
-        ],
-        minimumReviews: 3,
-        totalRevies: 0,
-        correct: "no",
-        reviewStatus: 'pending',
-        previewQuestion: {
-            question: "What is the slope-intercept form of a linear equation?",
-            options: [
-                "Ax + By = C",
-                "y = mx + b",
-                "x = my + b",
-                "y = ax² + bx + c"
-            ],
-            correctAnswer: 1,
-            explanation: "The slope-intercept form is y = mx + b, where m represents the slope and b represents the y-intercept."
-        },
-        comments: []
-    },
-    {
-        id: '3',
-        code: 'MATH-103',
-        title: 'Quadratic Equations',
-        description: 'Understanding and solving quadratic equations',
-        content: `
-      <h1>Chapter 3: Quadratic Equations</h1>
-      <p>Quadratic equations involve terms up to the second degree and are solved using various methods.</p>
-      <h2>3.1 Standard Form</h2>
-      <ul>
-        <li>ax² + bx + c = 0, where a, b, and c are real numbers and a ≠ 0.</li>
-      </ul>
-      <h2>3.2 Solving Methods</h2>
-      <ul>
-        <li>Factoring</li>
-        <li>Completing the square</li>
-        <li>Quadratic formula</li>
-      </ul>
-      <h2>3.3 Discriminant</h2>
-      <ul>
-        <li>b² - 4ac determines the nature of the roots.</li>
-      </ul>
-    `,
-        contentType: 'html',
-        explanation: 'Focuses on the structure of quadratic equations and the different methods used to solve them.',
-        language: 'en',
-        status: 'published',
-        questionsCount: 14,
-        studentsEnrolled: 39,
-        createdAt: '2024-03-10',
-        updatedAt: '2024-03-15',
-        createdBy: 'Ms. Kapoor',
-        attachments: [
-            { name: 'Quadratic Exercises.pdf', type: 'pdf', size: '2.1 MB' }
-        ],
-        relatedResources: [
-            { id: '5', title: 'Quadratic Formula Explained', type: 'text' }
-        ],
-        minimumReviews: 3,
-        totalRevies: 3,
-        correct: "yes",
-        reviewStatus: 'completed',
-        previewQuestion: {
-            question: "What is the discriminant of a quadratic equation ax² + bx + c = 0?",
-            options: [
-                "b² + 4ac",
-                "b² - 4ac",
-                "4ac - b²",
-                "a² + b² + c²"
-            ],
-            correctAnswer: 1,
-            explanation: "The discriminant is b² - 4ac, which determines the nature of the roots of the quadratic equation."
-        },
-        comments: [
-            {
-                id: '2',
-                user: 'Reviewer B',
-                text: 'Consider adding a real-world example.',
-                type: 'suggestion',
-                createdAt: '2024-03-16'
-            },
-            {
-                id: '3',
-                user: 'Reviewer C',
-                text: 'Typo in the discriminant explanation.',
-                type: 'flagged',
-                createdAt: '2024-03-17'
-            }
-        ]
-    }
-];
-
+// Your actual data structure
 export function ContentViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [adminAction, setAdminAction] = useState(null);
 
+    const contentUnits = useContentStore(state => state.content);
+    // Use the mock data instead of Zustand store
     const unit = contentUnits.find(u => u.id === id);
 
     // Mock admin check - in real app, this would come from user context/auth
@@ -238,7 +55,7 @@ export function ContentViewPage() {
         // In a real app, this would be an API call
         console.log(`Admin ${action} content unit ${id}`);
 
-        // Update the unit status
+        // Update the unit status (in a real app, this would update the store/database)
         if (action === 'approve') {
             unit.status = 'published';
             unit.correct = 'yes';
@@ -279,11 +96,9 @@ export function ContentViewPage() {
     };
 
     const getReviewStatusBadge = () => {
-        const approvedCount = unit.comments.filter(c => c.type === 'approved').length;
-        const rejectedCount = unit.comments.filter(c => c.type === 'rejected').length;
 
-        if (unit.totalRevies >= unit.minimumReviews) {
-            if (approvedCount >= Math.ceil(unit.minimumReviews / 2)) {
+        if (unit?.reviewStatus == "completed") {
+            if (unit?.correct == "yes") {
                 return (
                     <Badge className="bg-green-100 text-green-800">
                         <CheckCircle className="h-4 w-4 mr-1" />
@@ -305,6 +120,37 @@ export function ContentViewPage() {
                     Pending ({unit.totalRevies}/{unit.minimumReviews} reviews)
                 </Badge>
             );
+        }
+    };
+
+    const renderContent = () => {
+        switch (unit.contentType) {
+            case 'image':
+                return (
+                    <div className="flex justify-center my-4">
+                        <img
+                            src={unit.content}
+                            alt="Content image"
+                            className="max-h-[400px] rounded-lg object-contain"
+                        />
+                    </div>
+                );
+            case 'video':
+                return (
+                    <div className="aspect-video bg-black rounded-lg my-4">
+                        <video controls className="w-full h-full">
+                            <source src={unit.content} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                );
+            default:
+                return (
+                    <div
+                        className="prose dark:prose-invert max-w-none mt-4"
+                        dangerouslySetInnerHTML={{ __html: unit.content }}
+                    />
+                );
         }
     };
 
@@ -335,7 +181,7 @@ export function ContentViewPage() {
                         <div className="flex gap-2">
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
+                                    <Button variant="outline" className="border-green-500 text-green-700 hover:bg-green-50 hover:text-green-800">
                                         <CheckCircle className="h-4 w-4 mr-2" />
                                         Admin Approve
                                     </Button>
@@ -361,7 +207,7 @@ export function ContentViewPage() {
 
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50">
+                                    <Button variant="outline" className="border-red-500 text-red-700 hover:bg-red-50 hover:text-red-800">
                                         <XCircle className="h-4 w-4 mr-2" />
                                         Admin Reject
                                     </Button>
@@ -386,11 +232,20 @@ export function ContentViewPage() {
                             </AlertDialog>
                         </div>
                     )}
+                    {unit.reviewStatus != "completed" &&
 
-                    <Button variant="outline" onClick={() => navigate(`/content/${id}/review`)}>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Review
-                    </Button>
+                        <Button variant="outline" onClick={() => navigate(`/reviews`)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Review
+                        </Button>
+                    }
+                    {unit.status == "rejected" && 
+                        <Button variant="outline" onClick={() => navigate(`/reviews`)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Add to Review
+                        </Button>
+                    }
+
                     <Button variant="outline">
                         <Share2 className="h-4 w-4 mr-2" />
                         Share
@@ -411,17 +266,17 @@ export function ContentViewPage() {
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="bg-muted/20">
+                            <Button variant="outline" className="bg-muted/20">
                                 {unit.code}
-                            </Badge>
-                            <Badge variant="outline">
+                            </Button>
+                            <Button variant="outline">
                                 <ContentIcon className="h-3 w-3 mr-1" />
                                 {unit.contentType}
-                            </Badge>
-                            <Badge variant="outline">
+                            </Button>
+                            <Button variant="outline">
                                 <StatusIcon className="h-3 w-3 mr-1" />
                                 {unit.status}
-                            </Badge>
+                            </Button>
                         </div>
                     </div>
                 </CardHeader>
@@ -430,17 +285,13 @@ export function ContentViewPage() {
 
                 <CardContent>
                     <Tabs defaultValue="content" className="w-full">
-                        <TabsList className="grid w-full grid-cols-3">
+                        <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="content">Content</TabsTrigger>
                             <TabsTrigger value="preview">Preview</TabsTrigger>
-                            <TabsTrigger value="resources">Resources</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="content">
-                            <div
-                                className="prose dark:prose-invert max-w-none mt-4"
-                                dangerouslySetInnerHTML={{ __html: unit.content }}
-                            />
+                            {renderContent()}
                             <div className="mt-6 p-4 bg-muted/20 rounded-lg">
                                 <h4 className="font-medium mb-2">Explanation</h4>
                                 <p>{unit.explanation}</p>
@@ -457,99 +308,69 @@ export function ContentViewPage() {
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        {unit.previewQuestion ? (
+                                        <div className='pl-2 pb-4 mb-6 border-b'>
+                                            {renderContent()}
+                                        </div>
+                                        {unit.questions ? (
                                             <div className="space-y-4">
                                                 <div className="p-4 bg-muted/20 rounded-lg">
                                                     <h4 className="font-medium mb-3">Question:</h4>
-                                                    <p className="text-lg">{unit.previewQuestion.question}</p>
+                                                    <p className="text-lg">{unit.questions.question}</p>
                                                 </div>
 
                                                 <div className="space-y-2">
-                                                    <h4 className="font-medium">Options:</h4>
-                                                    {unit.previewQuestion.options.map((option, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className={`p-3 rounded-lg border ${index === unit.previewQuestion.correctAnswer
-                                                                    ? 'bg-green-50 border-green-200 text-green-800'
-                                                                    : 'bg-background border-border'
-                                                                }`}
-                                                        >
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="font-medium">
-                                                                    {String.fromCharCode(65 + index)}.
-                                                                </span>
-                                                                <span>{option}</span>
-                                                                {index === unit.previewQuestion.correctAnswer && (
-                                                                    <CheckCircle className="h-4 w-4 text-green-600 ml-auto" />
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                                    <h4 className="font-medium">Type:</h4>
+                                                    <Badge variant="outline">{unit.questions.type}</Badge>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <h4 className="font-medium">Topic:</h4>
+                                                    <Badge variant="outline">{unit.questions.topic}</Badge>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <h4 className="font-medium">Difficulty:</h4>
+                                                    <Badge variant="outline" className={
+                                                        unit.questions.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
+                                                            unit.questions.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                                'bg-red-100 text-red-800'
+                                                    }>
+                                                        {unit.questions.difficulty}
+                                                    </Badge>
+                                                </div>
+
+                                                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                                                    <h4 className="font-medium mb-2 text-green-800">Correct Answer:</h4>
+                                                    <p className="text-green-700">{unit.questions.correctAnswer}</p>
                                                 </div>
 
                                                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                                                     <h4 className="font-medium mb-2 text-blue-800">Explanation:</h4>
-                                                    <p className="text-blue-700">{unit.previewQuestion.explanation}</p>
+                                                    <p className="text-blue-700">{unit.questions.explanation}</p>
+                                                </div>
+
+                                                <div className="p-4 bg-muted/20 rounded-lg">
+                                                    <h4 className="font-medium mb-2">Question Details:</h4>
+                                                    <div className="space-y-1 text-sm text-muted-foreground">
+                                                        <p>Created by: {unit.questions.createdBy}</p>
+                                                        <p>Created at: {unit.questions.createdAt}</p>
+                                                        <p>Review Status:
+                                                            <Badge variant="outline" className={
+                                                                unit.questions.reviewStatus === 'approved' ? 'bg-green-100 text-green-800 ml-2' :
+                                                                    unit.questions.reviewStatus === 'pending' ? 'bg-yellow-100 text-yellow-800 ml-2' :
+                                                                        'bg-red-100 text-red-800 ml-2'
+                                                            }>
+                                                                {unit.questions.reviewStatus}
+                                                            </Badge>
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="text-center py-8">
                                                 <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                                <p className="text-muted-foreground">No preview question available</p>
+                                                <p className="text-muted-foreground">No questions available</p>
                                             </div>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </TabsContent>
-
-                        <TabsContent value="resources">
-                            <div className="grid gap-6 md:grid-cols-2 mt-4">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Attachments</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        {unit.attachments && unit.attachments.length > 0 ? (
-                                            <div className="space-y-2">
-                                                {unit.attachments.map((file, index) => (
-                                                    <div key={index} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg">
-                                                        <FileText className="h-4 w-4 text-muted-foreground" />
-                                                        <span className="flex-1">{file.name}</span>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                            <Download className="h-4 w-4" />
-                                                        </Button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-muted-foreground">No attachments</p>
-                                        )}
-                                    </CardContent>
-                                </Card>
-
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Related Resources</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        {unit.relatedResources && unit.relatedResources.length > 0 ? (
-                                            <div className="space-y-2">
-                                                {unit.relatedResources.map((resource, i) => {
-                                                    const Icon = getContentTypeIcon(resource.type);
-                                                    return (
-                                                        <div key={i} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg">
-                                                            <Icon className="h-4 w-4 text-muted-foreground" />
-                                                            <span className="flex-1">{resource.title}</span>
-                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                                <Link className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        ) : (
-                                            <p className="text-muted-foreground">No related resources</p>
                                         )}
                                     </CardContent>
                                 </Card>
