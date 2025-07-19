@@ -38,10 +38,13 @@ export const useAdminContentStore = create((set, get) => ({
             tags: ["react", "hooks", "javascript"],
             totalReviews: 0,
             minimumReviews: 3,
+            questionType:"content",
             questions: {
-                ...data.question
+                ...data.questions
             }
-        };
+        };        
+        console.log("data", newData)
+        
         set((state) => ({
             content:[...state.content, newData]
         }));

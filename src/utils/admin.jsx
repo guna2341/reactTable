@@ -5,8 +5,7 @@ export const contentUnits = [
         code: 'MATH-101',
         title: 'Introduction to Algebra',
         description: 'Basic algebraic concepts and operations',
-        content: `
-      <h2>Chapter 1: Basic Concepts</h2>
+        content: `<h2>Chapter 1: Basic Concepts</h2>
       <p>Algebra is a branch of mathematics dealing with symbols and the rules for manipulating those symbols.</p>
       <h3>1.1 Variables and Constants</h3>
       <ul>
@@ -17,28 +16,26 @@ export const contentUnits = [
       <ul>
         <li><strong>Expression:</strong> A combination of variables, numbers and operations.</li>
         <li><strong>Equation:</strong> A statement that two expressions are equal.</li>
-      </ul>
-    `,
-        contentType: 'html',
+      </ul>`,
+        questionType: "content",
         language: 'en',
         explanation: 'This unit introduces algebraic concepts like variables, constants, expressions, and equations.',
         status: 'published',
         createdAt: '2024-01-15',
         updatedAt: '2024-01-20',
         createdBy: 'Dr. Smith',
-        tags: ["react", "hooks", "javascript"],
         totalReviews: 3,
         minimumReviews: 3,
-        questions: 
-            {
-                id: 'q1',
-                question: 'What is a variable in algebra?',
-                type: 'Short Answer',
-                topic: 'variables',
-                difficulty: 'Easy',
-                correctAnswer: 'A symbol that represents a number that can change.',
-                explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
-            },
+        questions:
+        {
+            id: 'q1',
+            question: 'What is a variable in algebra?',
+            type: 'Short Answer',
+            topic: 'variables',
+            difficulty: 'Easy',
+            correctAnswer: 'A symbol that represents a number that can change.',
+            explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
+        },
     },
     {
         id: '2',
@@ -54,7 +51,6 @@ export const contentUnits = [
         <li>நீளமான கோணம்</li>
       </ul>
     `,
-        contentType: 'html',
         language: 'ta',
         explanation: 'This unit teaches the basics of angles and their types in Tamil.',
         status: 'rejected',
@@ -63,23 +59,21 @@ export const contentUnits = [
         createdAt: '2024-02-01',
         updatedAt: '2024-02-04',
         createdBy: 'Dr. Kumar',
-        tags: ["react", "hooks", "javascript"],
+        questionType: "content",
         totalRevies: 3,
         minimumReviews: 3,
-        reviewStatus: 'completed',
-        correct: 'no',
-        questions: 
-            {
-                id: 'q3',
-                question: 'கோணம் என்றால் என்ன?',
-                type: 'Short Answer',
-                topic: 'angles',
-                difficulty: 'Easy',
-                correctAnswer: 'இரண்டு ரேகைகள் சந்திக்கும் இடத்தில் உருவாகும் வடிவம்.',
-                explanation: 'An angle is formed at the intersection of two lines.',
-                createdBy: 'Dr. Kumar',
-                createdAt: '2024-02-01'
-            }
+        questions:
+        {
+            id: 'q3',
+            question: 'கோணம் என்றால் என்ன?',
+            type: 'Long Answer',
+            topic: 'angles',
+            difficulty: 'Easy',
+            correctAnswer: 'இரண்டு ரேகைகள் சந்திக்கும் இடத்தில் உருவாகும் வடிவம்.',
+            explanation: 'An angle is formed at the intersection of two lines.',
+            createdBy: 'Dr. Kumar',
+            createdAt: '2024-02-01'
+        }
     },
     {
         id: '3',
@@ -96,7 +90,6 @@ export const contentUnits = [
         <li>टैन्जेंट (tan)</li>
       </ul>
     `,
-        contentType: 'html',
         language: 'hi',
         explanation: 'This unit introduces trigonometry and its basic ratios in Hindi.',
         status: 'pending',
@@ -105,31 +98,29 @@ export const contentUnits = [
         createdAt: '2024-03-01',
         updatedAt: '2024-03-04',
         createdBy: 'Dr. Mehta',
-        tags: ["react", "hooks", "javascript"],
+        questionType: "content",
         totalRevies: 2,
         minimumReviews: 3,
-        reviewStatus: 'pending',
-        correct: 'yes',
-        questions: 
-            {
-                id: 'q4',
-                question: 'त्रिकोणमिति में साइन क्या दर्शाता है?',
-                type: 'Short Answer',
-                topic: 'trigonometry',
-                difficulty: 'Medium',
-                correctAnswer: 'विपरीत भुजा और कर्ण का अनुपात',
-                explanation: 'In trigonometry, sine is the ratio of the opposite side to the hypotenuse.',
-                createdBy: 'Dr. Mehta',
-                createdAt: '2024-03-01'
-            }
+        questions:
+        {
+            id: 'q4',
+            question: 'त्रिकोणमिति में साइन क्या दर्शाता है?',
+            type: 'Short Answer',
+            topic: 'trigonometry',
+            difficulty: 'Medium',
+            correctAnswer: 'विपरीत भुजा और कर्ण का अनुपात',
+            explanation: 'In trigonometry, sine is the ratio of the opposite side to the hypotenuse.',
+            createdBy: 'Dr. Mehta',
+            createdAt: '2024-03-01'
+        }
     },
     {
         id: '4',
         code: 'MATH-101',
         title: 'Introduction to Algebra',
         description: 'Basic algebraic concepts and operations',
-        content : "https://tse2.mm.bing.net/th/id/OIP.Sr9x3mKM_6ch6Jk-5n4BbQHaE1?pid=Api&P=0&h=180",
-        contentType: 'image',
+        content: "<p>Demo Image</p>",
+        imageLink: "https://tse2.mm.bing.net/th/id/OIP.7cRYFyLoDEDh4sRtM73vvwHaDg?pid=Api&P=0&h=180",
         language: 'en',
         explanation: 'This unit introduces algebraic concepts like variables, constants, expressions, and equations.',
         status: 'approved',
@@ -138,19 +129,40 @@ export const contentUnits = [
         createdAt: '2024-01-15',
         updatedAt: '2024-01-20',
         createdBy: 'Dr. Smith',
-        tags: ["react", "hooks", "javascript"],
+        questionType: "content",
         totalReviews: 3,
         minimumReviews: 3,
-        reviewStatus: 'completed',
-        correct: 'yes',
         questions:
         {
             id: 'q1',
             question: 'What is a variable in algebra?',
-            type: 'Short Answer',
+            type: 'Multiple Choice',
+            options: [
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2933",
+                    isCorrect:true,
+                    text:"option a"
+                },
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2934",
+                    isCorrect: false,
+                    text: "option b"
+                },
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2935",
+                    isCorrect: false,
+                    text: "option c"
+                },
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2936",
+                    isCorrect: false,
+                    text: "option d"
+                },
+
+            ],
             topic: 'variables',
             difficulty: 'Easy',
-            correctAnswer: 'A symbol that represents a number that can change.',
+            correctAnswer: 'a',
             explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
             createdBy: 'Dr. Smith',
             createdAt: '2024-01-15'
@@ -179,7 +191,7 @@ export const questionBank = [
                                 options: ['x = 4', 'x = 6', 'x = 8', 'x = 9'],
                                 correctAnswer: 'A',
                                 explanation: 'Subtract 5 from both sides: 2x = 8, then divide by 2: x = 4',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Dr. Smith',
                                 createdAt: '2024-01-15',
                                 comments: [
@@ -206,7 +218,7 @@ export const questionBank = [
                                 options: ['x = 4', 'x = 6', 'x = 5', 'x = 7'],
                                 correctAnswer: 'B',
                                 explanation: 'Add 7 to both sides: 3x = 18, then divide by 3: x = 6',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Dr. Lin',
                                 createdAt: '2024-01-12',
                                 comments: [],
@@ -225,7 +237,7 @@ export const questionBank = [
                                 options: ['x = 1 or x = 6', 'x = 2 or x = 3', 'x = -2 or x = -3', 'x = 0'],
                                 correctAnswer: 'B',
                                 explanation: 'Factor the equation: (x - 2)(x - 3) = 0, so x = 2 or x = 3',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Dr. Patel',
                                 createdAt: '2024-01-10',
                                 comments: [],
@@ -251,7 +263,7 @@ export const questionBank = [
                                 options: ['5', '6', '7', '8'],
                                 correctAnswer: 'B',
                                 explanation: 'A hexagon has 6 sides.',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Prof. Alice',
                                 createdAt: '2024-01-17',
                                 comments: [],
@@ -271,7 +283,7 @@ export const questionBank = [
                                 difficulty: 'Medium',
                                 correctAnswer: '40 square cm',
                                 explanation: 'Area of triangle = (1/2) × base × height = (1/2) × 10 × 8 = 40 sq cm',
-                                reviewStatus: 'pending',
+                                status: 'pending',
                                 createdBy: 'Prof. Johnson',
                                 createdAt: '2024-01-18',
                                 comments: [
@@ -292,7 +304,7 @@ export const questionBank = [
                                 options: ['180°', '360°', '90°', '270°'],
                                 correctAnswer: 'A',
                                 explanation: 'The sum of the interior angles in a triangle is always 180°.',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Dr. Green',
                                 createdAt: '2024-01-19',
                                 comments: [],
@@ -326,7 +338,7 @@ export const questionBank = [
                                     'An object at rest stays at rest and an object in motion stays in motion unless acted upon by an external force.',
                                 explanation:
                                     'This law describes inertia - the tendency of objects to resist changes in their state of motion.',
-                                reviewStatus: 'needs_review',
+                                status: 'needs_review',
                                 createdBy: 'Dr. Williams',
                                 createdAt: '2024-01-20',
                                 comments: [
@@ -347,7 +359,7 @@ export const questionBank = [
                                 options: ['Newton', 'Joule', 'Watt', 'Pascal'],
                                 correctAnswer: 'A',
                                 explanation: 'The SI unit of force is the Newton (N).',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Dr. Evans',
                                 createdAt: '2024-01-22',
                                 comments: [],
@@ -368,7 +380,7 @@ export const questionBank = [
                                 correctAnswer: 'The flow of electric charge through a conductor.',
                                 explanation:
                                     'Electric current is defined as the rate at which charge flows through a surface.',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Prof. Lee',
                                 createdAt: '2024-01-23',
                                 comments: [],
@@ -381,7 +393,7 @@ export const questionBank = [
                                 options: ['Voltmeter', 'Ammeter', 'Galvanometer', 'Ohmmeter'],
                                 correctAnswer: 'B',
                                 explanation: 'Electric current is measured using an ammeter.',
-                                reviewStatus: 'approved',
+                                status: 'approved',
                                 createdBy: 'Prof. Lee',
                                 createdAt: '2024-01-23',
                                 comments: [],
@@ -395,36 +407,36 @@ export const questionBank = [
 ];
 
 export const learningUnits = [
-        {
-            id: "1",
-            title: "Introduction to React",
-            type: "lecture",
-            course: "Web Development",
-            uploadDate: "2023-10-15",
-            downloadUrl: "#",
-            fileSize: "2.5 MB",
-            status: "published"
-        },
-        {
-            id: "2",
-            title: "Assignment 1: Components",
-            type: "assignment",
-            course: "Web Development",
-            uploadDate: "2023-10-18",
-            downloadUrl: "#",
-            fileSize: "1.2 MB",
-            status: "published"
-        },
-        {
-            id: "3",
-            title: "Advanced State Management",
-            type: "lecture",
-            course: "Advanced React",
-            uploadDate: "2023-10-20",
-            downloadUrl: "#",
-            fileSize: "3.8 MB",
-            status: "draft"
-        },
+    {
+        id: "1",
+        title: "Introduction to React",
+        type: "lecture",
+        course: "Web Development",
+        uploadDate: "2023-10-15",
+        downloadUrl: "#",
+        fileSize: "2.5 MB",
+        status: "published"
+    },
+    {
+        id: "2",
+        title: "Assignment 1: Components",
+        type: "assignment",
+        course: "Web Development",
+        uploadDate: "2023-10-18",
+        downloadUrl: "#",
+        fileSize: "1.2 MB",
+        status: "published"
+    },
+    {
+        id: "3",
+        title: "Advanced State Management",
+        type: "lecture",
+        course: "Advanced React",
+        uploadDate: "2023-10-20",
+        downloadUrl: "#",
+        fileSize: "3.8 MB",
+        status: "draft"
+    },
 ];
 
 export const reviews = [
