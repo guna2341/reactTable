@@ -223,10 +223,6 @@ export function ContentListPage() {
                       <Badge variant="outline" className="bg-muted/20">
                         {unit.code}
                       </Badge>
-                      <Badge variant="outline" className={getContentTypeColor(unit.contentType)}>
-                        <ContentIcon className="h-3 w-3 mr-1" />
-                        {unit.contentType}
-                      </Badge>
                       <Badge variant="outline" className={getStatusColor(unit.status)}>
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {unit.status}
