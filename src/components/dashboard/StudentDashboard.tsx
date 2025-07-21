@@ -1,3 +1,4 @@
+// StudentDashboard.jsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -14,77 +15,32 @@ import {
   Calendar,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useStudentDashboardStore } from '../../zustand/student/studentDashboard';
+
+// Icon mapping for dynamic icon rendering
+const iconComponents = {
+  CheckCircle,
+  Trophy,
+  Clock,
+  Target,
+  FileText,
+  AlertCircle,
+  Calendar,
+  TrendingUp,
+  BookOpen,
+  Play,
+};
 
 export function StudentDashboard() {
   const navigate = useNavigate();
-
-  const stats = [
-    {
-      title: 'Assessments Completed',
-      value: '5',
-      total: '12',
-      percentage: 42,
-      icon: CheckCircle,
-      color: 'text-success',
-    },
-    {
-      title: 'Average Score',
-      value: '78%',
-      description: '+3% from last month',
-      icon: Trophy,
-      color: 'text-accent',
-    },
-    {
-      title: 'Time Spent',
-      value: '14h',
-      description: 'On assessments this month',
-      icon: Clock,
-      color: 'text-primary',
-    },
-    {
-      title: 'Highest Score',
-      value: '94%',
-      description: 'Algebra Midterm',
-      icon: Target,
-      color: 'text-secondary',
-    },
-  ];
-
-  const upcomingAssessments = [
-    {
-      id: 1,
-      title: 'Mathematics Midterm',
-      type: 'Exam',
-      dueDate: '2023-11-15',
-      duration: '90 min',
-      status: 'Not Started',
-      preparation: 30,
-    },
-    {
-      id: 2,
-      title: 'English Essay',
-      type: 'Assignment',
-      dueDate: '2023-11-20',
-      duration: 'Take-home',
-      status: 'In Progress',
-      preparation: 65,
-    },
-    {
-      id: 3,
-      title: 'Science Quiz',
-      type: 'Quiz',
-      dueDate: '2023-11-10',
-      duration: '30 min',
-      status: 'Not Started',
-      preparation: 0,
-    },
-  ];
-
-  const recentResults = [
-    { assessment: 'Algebra Quiz', score: 88, date: '3 days ago', type: 'Quiz' },
-    { assessment: 'Literature Analysis', score: 76, date: '1 week ago', type: 'Assignment' },
-    { assessment: 'Chemistry Test', score: 82, date: '2 weeks ago', type: 'Test' },
-  ];
+  const {
+    stats,
+    upcomingAssessments,
+    recentResults,
+    updatePreparation,
+    addNewResult,
+    updateStats,
+  } = useStudentDashboardStore();
 
   return (
     <div className="space-y-6">
@@ -103,28 +59,31 @@ export function StudentDashboard() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title} className="bg-gradient-card border-0 shadow-soft">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              {stat.total && (
-                <div className="mt-2">
-                  <Progress value={stat.percentage} className="h-2" />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {stat.value} of {stat.total} completed
-                  </p>
-                </div>
-              )}
-              {stat.description && (
-                <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+        {stats.map((stat) => {
+          const IconComponent = iconComponents[stat.icon];
+          return (
+            <Card key={stat.title} className="bg-gradient-card border-0 shadow-soft">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                <IconComponent className={`h-4 w-4 ${stat.color}`} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                {stat.total && (
+                  <div className="mt-2">
+                    <Progress value={stat.percentage} className="h-2" />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {stat.value} of {stat.total} completed
+                    </p>
+                  </div>
+                )}
+                {stat.description && (
+                  <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -168,7 +127,14 @@ export function StudentDashboard() {
                 </div>
                 <Button
                   variant={assessment.preparation > 0 ? "default" : "outline"}
-                  onClick={() => navigate(`/assessments/${assessment.id}`)}
+                  onClick={() => {
+                    // Example of updating preparation when button is clicked
+                    const newPrep = assessment.preparation + 10;
+                    if (newPrep <= 100) {
+                      updatePreparation(assessment.id, newPrep);
+                    }
+                    navigate(`/assessments/${assessment.id}`);
+                  }}
                 >
                   {assessment.preparation > 0 ? 'Continue Prep' : 'Start Prep'}
                 </Button>
@@ -211,7 +177,11 @@ export function StudentDashboard() {
                 </div>
               </div>
             ))}
-            <Button variant="ghost" className="w-full mt-4">
+            <Button 
+              variant="ghost" 
+              className="w-full mt-4"
+              onClick={() => navigate('/analytics')}
+            >
               <TrendingUp className="h-4 w-4 mr-2" />
               View Detailed Analytics
             </Button>

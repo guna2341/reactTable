@@ -13,104 +13,45 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+// Icon mapping for dynamic icon rendering
+const iconComponents = {
+  CheckSquare,
+  Clock,
+  MessageSquare,
+  AlertTriangle,
+  Eye,
+  ThumbsUp,
+  ThumbsDown,
+  Edit
+};
+import {useReviewerDashboardStore} from '../../zustand/reviewer/reviewDashboard';
+
 export function ReviewerDashboard() {
   const navigate = useNavigate();
+  const {
+    stats,
+    pendingQuestions,
+    getPriorityColor,
+    getQuestionTypeColor,
+    removePendingQuestion,
+    updateQuestionStatus,
+    incrementReviewsCompleted
+  } = useReviewerDashboardStore();
 
-  const stats = [
-    {
-      title: 'Pending Reviews',
-      value: '7',
-      change: '2 urgent',
-      icon: Clock,
-      color: 'text-warning',
-      bgColor: 'bg-warning/10',
-    },
-    {
-      title: 'Completed Today',
-      value: '12',
-      change: '+4 from yesterday',
-      icon: CheckSquare,
-      color: 'text-success',
-      bgColor: 'bg-success/10',
-    },
-    {
-      title: 'Questions Flagged',
-      value: '3',
-      change: 'Need attention',
-      icon: AlertTriangle,
-      color: 'text-destructive',
-      bgColor: 'bg-destructive/10',
-    },
-    {
-      title: 'Comments Made',
-      value: '25',
-      change: 'This week',
-      icon: MessageSquare,
-      color: 'text-primary',
-      bgColor: 'bg-primary/10',
-    },
-  ];
-
-  const pendingQuestions = [
-    {
-      id: 1,
-      question: 'What is the square root of 144?',
-      unit: 'Mathematics Fundamentals',
-      type: 'MCQ',
-      submittedBy: 'Content Creator A',
-      priority: 'high',
-      submittedAt: '2 hours ago',
-      reviewsCompleted: 1,
-      reviewsNeeded: 3,
-    },
-    {
-      id: 2,
-      question: 'Explain the water cycle in detail.',
-      unit: 'Environmental Science',
-      type: 'Long Answer',
-      submittedBy: 'Content Creator B',
-      priority: 'medium',
-      submittedAt: '4 hours ago',
-      reviewsCompleted: 0,
-      reviewsNeeded: 3,
-    },
-    {
-      id: 3,
-      question: 'Match the following chemical elements with their symbols.',
-      unit: 'Chemistry Basics',
-      type: 'Match Following',
-      submittedBy: 'Admin User',
-      priority: 'low',
-      submittedAt: '1 day ago',
-      reviewsCompleted: 2,
-      reviewsNeeded: 3,
-    },
-  ];
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'bg-destructive text-destructive-foreground';
-      case 'medium':
-        return 'bg-warning text-warning-foreground';
-      case 'low':
-        return 'bg-muted text-muted-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
+  const handleApprove = (questionId) => {
+    updateQuestionStatus(questionId, 'approved');
+    incrementReviewsCompleted(questionId);
+    // Additional logic for approval
   };
 
-  const getQuestionTypeColor = (type: string) => {
-    switch (type) {
-      case 'MCQ':
-        return 'bg-primary/10 text-primary';
-      case 'Long Answer':
-        return 'bg-secondary/10 text-secondary';
-      case 'Match Following':
-        return 'bg-accent/10 text-accent';
-      default:
-        return 'bg-muted/10 text-muted-foreground';
-    }
+  const handleReject = (questionId) => {
+    updateQuestionStatus(questionId, 'rejected');
+    incrementReviewsCompleted(questionId);
+    // Additional logic for rejection
+  };
+
+  const handleEdit = (questionId) => {
+    navigate(`/questions/edit/${questionId}`);
   };
 
   return (
@@ -130,20 +71,23 @@ export function ReviewerDashboard() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title} className="bg-gradient-card border-0 shadow-soft">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <div className={`${stat.bgColor} p-2 rounded-lg`}>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {stats.map((stat) => {
+          const IconComponent = iconComponents[stat.icon];
+          return (
+            <Card key={stat.title} className="bg-gradient-card border-0 shadow-soft">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                <div className={`${stat.bgColor} p-2 rounded-lg`}>
+                  <IconComponent className={`h-4 w-4 ${stat.color}`} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Pending Questions */}
@@ -186,19 +130,31 @@ export function ReviewerDashboard() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/questions/${question.id}`)}>
                     <Eye className="h-4 w-4 mr-1" />
                     View
                   </Button>
-                  <Button variant="success" size="sm">
+                  <Button 
+                    variant="success" 
+                    size="sm"
+                    onClick={() => handleApprove(question.id)}
+                  >
                     <ThumbsUp className="h-4 w-4 mr-1" />
                     Approve
                   </Button>
-                  <Button variant="warning" size="sm">
+                  <Button 
+                    variant="warning" 
+                    size="sm"
+                    onClick={() => handleEdit(question.id)}
+                  >
                     <Edit className="h-4 w-4 mr-1" />
                     Edit
                   </Button>
-                  <Button variant="destructive" size="sm">
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={() => handleReject(question.id)}
+                  >
                     <ThumbsDown className="h-4 w-4 mr-1" />
                     Reject
                   </Button>

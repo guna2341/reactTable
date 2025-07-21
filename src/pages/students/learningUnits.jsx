@@ -1,4 +1,4 @@
-import { useState } from "react";
+// StudentMaterialsPage.jsx
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button"; // Make sure this import path is correct
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,63 +22,38 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Search, FileText, BookOpen } from "lucide-react";
+import { useStudentMaterialsStore } from "../../zustand/student/learningUnits";
 
 export function StudentMaterialsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("All Courses");
-  const [selectedType, setSelectedType] = useState("All Types");
-  const [downloadedMaterials, setDownloadedMaterials] = useState([]);
+  const {
+    searchTerm,
+    selectedCourse,
+    selectedType,
+    downloadedMaterials,
+    setSearchTerm,
+    setSelectedCourse,
+    setSelectedType,
+    addDownloadedMaterial,
+    getFilteredMaterials,
+  } = useStudentMaterialsStore();
 
-  // Sample data
-  const studyMaterials = [
-    {
-      id: "1",
-      title: "Introduction to React",
-      type: "lecture",
-      course: "Web Development",
-      uploadDate: "2023-10-15",
-      downloadUrl: "#",
-    },
-    {
-      id: "2",
-      title: "Assignment 1: Components",
-      type: "assignment",
-      course: "Web Development",
-      uploadDate: "2023-10-18",
-      downloadUrl: "#",
-    },
-    {
-      id: "3",
-      title: "Advanced State Management",
-      type: "lecture",
-      course: "Advanced React",
-      uploadDate: "2023-10-20",
-      downloadUrl: "#",
-    },
-  ];
-
-  // Filter materials
-  const filteredMaterials = studyMaterials.filter(material => {
-    const matchesSearch = material.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         material.course.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCourse = selectedCourse === "All Courses" || material.course === selectedCourse;
-    const matchesType = selectedType === "All Types" || 
-                       material.type.toLowerCase() === selectedType.toLowerCase();
-    
-    return matchesSearch && matchesCourse && matchesType;
-  });
+  const filteredMaterials = getFilteredMaterials();
 
   const handleMaterialClick = (materialId, downloadUrl) => {
     if (downloadedMaterials.includes(materialId)) {
       alert("You've already downloaded this material. Downloading again...");
     } else {
-      setDownloadedMaterials([...downloadedMaterials, materialId]);
+      addDownloadedMaterial(materialId);
     }
     
     // Trigger download (in real app, replace with actual download logic)
     console.log(`Downloading material ${materialId}`);
     window.location.href = downloadUrl;
   };
+
+  // Get unique courses for dropdown
+  const courses = ["All Courses", ...new Set(filteredMaterials.map(m => m.course))];
+  const types = ["All Types", "Lecture", "Assignment"];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -104,7 +79,7 @@ export function StudentMaterialsPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {["All Courses", ...new Set(studyMaterials.map(m => m.course))].map(course => (
+              {courses.map(course => (
                 <DropdownMenuItem 
                   key={course} 
                   onClick={() => setSelectedCourse(course)}
@@ -122,7 +97,7 @@ export function StudentMaterialsPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {["All Types", "Lecture", "Assignment"].map(type => (
+              {types.map(type => (
                 <DropdownMenuItem 
                   key={type} 
                   onClick={() => setSelectedType(type)}
@@ -135,38 +110,51 @@ export function StudentMaterialsPage() {
         </div>
 
         <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Course</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Uploaded</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMaterials.map((material) => (
-                <TableRow 
-                  key={material.id}
-                  className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleMaterialClick(material.id, material.downloadUrl)}
-                >
-                  <TableCell className="font-medium">
-                    <div className="flex items-center">
-                      {material.type === "lecture" && <FileText className="mr-2 h-4 w-4" />}
-                      {material.type === "assignment" && <BookOpen className="mr-2 h-4 w-4" />}
-                      <span className={downloadedMaterials.includes(material.id) ? "text-blue-600" : ""}>
-                        {material.title}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{material.course}</TableCell>
-                  <TableCell className="capitalize">{material.type}</TableCell>
-                  <TableCell>{material.uploadDate}</TableCell>
+          <CardHeader>
+            <CardTitle>Available Materials</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Uploaded</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredMaterials.length > 0 ? (
+                  filteredMaterials.map((material) => (
+                    <TableRow 
+                      key={material.id}
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleMaterialClick(material.id, material.downloadUrl)}
+                    >
+                      <TableCell className="font-medium">
+                        <div className="flex items-center">
+                          {material.type === "lecture" && <FileText className="mr-2 h-4 w-4" />}
+                          {material.type === "assignment" && <BookOpen className="mr-2 h-4 w-4" />}
+                          <span className={downloadedMaterials.includes(material.id) ? "text-blue-600" : ""}>
+                            {material.title}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{material.course}</TableCell>
+                      <TableCell className="capitalize">{material.type}</TableCell>
+                      <TableCell>{material.uploadDate}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                      No materials found matching your criteria
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
         </Card>
       </div>
     </div>
