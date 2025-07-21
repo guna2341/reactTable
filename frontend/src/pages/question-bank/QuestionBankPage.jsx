@@ -3,235 +3,201 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { RichTextEditor } from '@/components/ui/rich-text-editor';
-import { 
-  Search, 
-  Filter, 
-  Plus, 
-  Eye, 
-  MessageSquare, 
-  ThumbsUp, 
-  Edit, 
-  AlertTriangle,
+import {
+  Search,
+  Plus,
+  Eye,
+  MessageSquare,
+  ThumbsUp,
+  Edit,
   BookOpen,
   ChevronDown,
   ChevronRight
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useQuestionStore } from '../../zustand/admin/questionBank';
 
 export function QuestionBankPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const [showCommentBox, setShowCommentBox] = useState(null);
   const [commentText, setCommentText] = useState('');
-  const [expandedTopics, setExpandedTopics] = useState(['math']);
+  const [commentType, setCommentType] = useState('suggestion');
+  const [expandedTopics, setExpandedTopics] = useState(['math', 'algebra', 'science', 'physics']);
 
-  // Mock data for question hierarchy
-  const questionTopics = [
-    {
-      id: 'math',
-      name: 'Mathematics',
-      children: [
-        {
-          id: 'algebra',
-          name: 'Algebra',
-          children: [
-            { id: 'basic-algebra', name: 'Basic Operations', questionCount: 25 },
-            { id: 'equations', name: 'Linear Equations', questionCount: 18 },
-            { id: 'quadratic', name: 'Quadratic Equations', questionCount: 12 }
-          ]
-        },
-        {
-          id: 'geometry',
-          name: 'Geometry',
-          children: [
-            { id: 'basic-shapes', name: 'Basic Shapes', questionCount: 15 },
-            { id: 'triangles', name: 'Triangles', questionCount: 22 }
-          ]
-        }
-      ]
-    },
-    {
-      id: 'science',
-      name: 'Science',
-      children: [
-        {
-          id: 'physics',
-          name: 'Physics',
-          children: [
-            { id: 'mechanics', name: 'Mechanics', questionCount: 30 },
-            { id: 'electricity', name: 'Electricity', questionCount: 20 }
-          ]
-        }
-      ]
-    }
-  ];
+  // Get question bank and actions from Zustand store
+  const { questionBank, addCommentToQuestion, findTopicIdForQuestion } = useQuestionStore();
 
-  // Mock questions
-  const questions = [
-    {
-      id: '1',
-      question: 'Solve for x: 2x + 5 = 13',
-      type: 'MCQ',
-      topic: 'basic-algebra',
-      difficulty: 'Easy',
-      options: ['x = 4', 'x = 6', 'x = 8', 'x = 9'],
-      correctAnswer: 'A',
-      explanation: 'Subtract 5 from both sides: 2x = 8, then divide by 2: x = 4',
-      reviewStatus: 'approved',
-      createdBy: 'Dr. Smith',
-      createdAt: '2024-01-15',
-      comments: [
-        {
-          id: '1',
-          user: 'Reviewer A',
-          text: 'Clear and well-structured question.',
-          type: 'approved',
-          createdAt: '2024-01-16'
-        }
-      ],
-      mistakes: []
-    },
-    {
-      id: '2',
-      question: 'What is the area of a triangle with base 10 cm and height 8 cm?',
-      type: 'Short Answer',
-      topic: 'triangles',
-      difficulty: 'Medium',
-      correctAnswer: '40 square cm',
-      explanation: 'Area of triangle = (1/2) × base × height = (1/2) × 10 × 8 = 40 sq cm',
-      reviewStatus: 'pending',
-      createdBy: 'Prof. Johnson',
-      createdAt: '2024-01-18',
-      comments: [
-        {
-          id: '2',
-          user: 'Reviewer B',
-          text: 'Consider adding a diagram for better understanding.',
-          type: 'suggestion',
-          createdAt: '2024-01-19'
-        }
-      ],
-      mistakes: []
-    },
-    {
-      id: '3',
-      question: 'Explain Newton first law of motion with an example.',
-      type: 'Long Answer',
-      topic: 'mechanics',
-      difficulty: 'Hard',
-      correctAnswer: 'An object at rest stays at rest and an object in motion stays in motion unless acted upon by an external force.',
-      explanation: 'This law describes inertia - the tendency of objects to resist changes in their state of motion.',
-      reviewStatus: 'needs_review',
-      createdBy: 'Dr. Williams',
-      createdAt: '2024-01-20',
-      comments: [
-        {
-          id: '3',
-          user: 'Reviewer C',
-          text: 'The question is good but needs more specific criteria for evaluation.',
-          type: 'needs_edit',
-          createdAt: '2024-01-21'
-        }
-      ],
-      mistakes: ['vague-criteria']
-    }
-  ];
+  // Recursively flatten all questions from the question bank with their path info
+  const flattenQuestions = (items, parentPath = '', parentIds = {}) => {
+    let questions = [];
+
+    items.forEach(item => {
+      const currentPath = parentPath ? `${parentPath} > ${item.name}` : item.name;
+      const currentIds = { ...parentIds, [item.id]: true };
+
+      // Add questions from current level
+      if (item.questions && item.questions.length > 0) {
+        const questionsWithPath = item.questions.map(question => ({
+          ...question,
+          topicPath: currentPath,
+          parentIds: currentIds,
+          directParentId: item.id
+        }));
+        questions.push(...questionsWithPath);
+      }
+
+      // Recursively process children
+      if (item.children && item.children.length > 0) {
+        const childQuestions = flattenQuestions(item.children, currentPath, currentIds);
+        questions.push(...childQuestions);
+      }
+    });
+
+    return questions;
+  };
+
+  const allQuestions = flattenQuestions(questionBank);
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved':
-        return 'bg-success/10 text-success';
+        return 'bg-green-100 text-green-800';
       case 'pending':
-        return 'bg-warning/10 text-warning';
+        return 'bg-yellow-100 text-yellow-800';
       case 'needs_review':
-        return 'bg-destructive/10 text-destructive';
+        return 'bg-red-100 text-red-800';
       default:
-        return 'bg-muted/10 text-muted-foreground';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'Easy':
-        return 'bg-success/10 text-success';
+        return 'bg-green-100 text-green-800';
       case 'Medium':
-        return 'bg-warning/10 text-warning';
+        return 'bg-yellow-100 text-yellow-800';
       case 'Hard':
-        return 'bg-destructive/10 text-destructive';
+        return 'bg-red-100 text-red-800';
       default:
-        return 'bg-muted/10 text-muted-foreground';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'MCQ':
-        return 'bg-primary/10 text-primary';
+      case 'Multiple Choice':
+        return 'bg-blue-100 text-blue-800';
       case 'Short Answer':
-        return 'bg-secondary/10 text-secondary';
+        return 'bg-purple-100 text-purple-800';
       case 'Long Answer':
-        return 'bg-accent/10 text-accent';
+        return 'bg-indigo-100 text-indigo-800';
       default:
-        return 'bg-muted/10 text-muted-foreground';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const toggleTopic = (topicId) => {
-    setExpandedTopics(prev => 
-      prev.includes(topicId) 
+    setExpandedTopics(prev =>
+      prev.includes(topicId)
         ? prev.filter(id => id !== topicId)
         : [...prev, topicId]
     );
   };
 
   const handleAddComment = (questionId) => {
-    // Handle comment submission
-    console.log('Adding comment to question:', questionId, commentText);
+    if (!commentText.trim()) return;
+
+    // Find the topic ID that contains this question
+    const topicId = findTopicIdForQuestion(questionId);
+    if (!topicId) {
+      console.error('Could not find topic for question:', questionId);
+      return;
+    }
+
+    const newComment = {
+      user: 'Current User', // Replace with actual user from auth
+      text: commentText,
+      type: commentType,
+    };
+
+    // Add the comment to the question in the store
+    addCommentToQuestion(topicId, questionId, newComment);
+
+    // Reset the comment input
     setCommentText('');
+    setCommentType('suggestion');
     setShowCommentBox(null);
   };
 
+  // Recursive function to render the topic hierarchy
   const renderTopicTree = (topics, level = 0) => {
     return topics.map(topic => (
       <div key={topic.id} className={`${level > 0 ? 'ml-4' : ''}`}>
-        <Collapsible 
-          open={expandedTopics.includes(topic.id)} 
-          onOpenChange={() => toggleTopic(topic.id)}
-        >
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-auto p-2 font-normal"
-            >
-              {topic.children ? (
-                expandedTopics.includes(topic.id) ? (
-                  <ChevronDown className="h-4 w-4 mr-1" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 mr-1" />
-                )
+        <div className="flex items-center">
+          {/* Expand/Collapse button - separate from selection */}
+          {topic.children && topic.children.length > 0 && (
+            <div className='mr-2'>
+              {expandedTopics.includes(topic.id) ? (
+                <ChevronDown className="h-4 w-4" />
               ) : (
-                <div className="w-5" />
+                <ChevronRight className="h-4 w-4" />
               )}
-              <span>{topic.name}</span>
-              {topic.questionCount && (
-                <Badge variant="outline" className="ml-auto">
-                  {topic.questionCount}
-                </Badge>
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          {topic.children && (
-            <CollapsibleContent>
-              {renderTopicTree(topic.children, level + 1)}
-            </CollapsibleContent>
+            </div>
           )}
-        </Collapsible>
+
+          {/* Topic selection button */}
+          <Button
+            variant={selectedTopic === topic.id ? 'default' : 'ghost'}
+            className="flex-1 justify-start h-auto p-2 font-normal"
+            onClick={() => {
+              setSelectedTopic(topic.id)
+              toggleTopic(topic.id);
+            }}
+          >
+            {!topic.children?.length && <div className="w-8" />}
+            <span className="truncate">{topic.name}</span>
+            {topic.questionCount && (
+              <Badge variant="outline" className="ml-auto">
+                {topic.questionCount}
+              </Badge>
+            )}
+          </Button>
+        </div>
+
+        {/* Render children if expanded */}
+        {topic.children && topic.children.length > 0 && expandedTopics.includes(topic.id) && (
+          <div className="mt-1">
+            {renderTopicTree(topic.children, level + 1)}
+          </div>
+        )}
       </div>
     ));
   };
+
+  // Filter questions based on search and filters
+  const filteredQuestions = allQuestions.filter(question => {
+    const matchesSearch = question.question.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Check if selected topic matches any parent in the hierarchy
+    const matchesTopic = selectedTopic === 'all' ||
+      selectedTopic in (question.parentIds || {}) ||
+      question.directParentId === selectedTopic;
+
+    const matchesDifficulty = selectedDifficulty === 'all' || question.difficulty === selectedDifficulty;
+    const matchesType = selectedType === 'all' || question.type === selectedType;
+    const matchesStatus = selectedStatus === 'all' || question.status === selectedStatus;
+
+    return matchesSearch && matchesTopic && matchesDifficulty && matchesType && matchesStatus;
+  });
+
+  // Get unique question types for filter
+  const questionTypes = [...new Set(allQuestions.map(q => q.type).filter(Boolean))];
 
   return (
     <div className="space-y-6">
@@ -239,10 +205,10 @@ export function QuestionBankPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Question Bank</h1>
           <p className="text-muted-foreground">
-            Organize and manage questions by topic hierarchy
+            Organize and manage questions by topic hierarchy ({allQuestions.length} total questions)
           </p>
         </div>
-        <Button >
+        <Button>
           <Plus className="h-4 w-4 mr-2" />
           Add Question
         </Button>
@@ -250,7 +216,7 @@ export function QuestionBankPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Topic Hierarchy Sidebar */}
-        <Card className="lg:col-span-1 bg-gradient-card border-0 shadow-soft">
+        <Card className="lg:col-span-1 h-fit">
           <CardHeader>
             <CardTitle className="text-lg">Topics</CardTitle>
             <CardDescription>Browse questions by topic</CardDescription>
@@ -263,9 +229,9 @@ export function QuestionBankPage() {
                 onClick={() => setSelectedTopic('all')}
               >
                 <BookOpen className="h-4 w-4 mr-2" />
-                All Topics
+                All Topics ({allQuestions.length})
               </Button>
-              {renderTopicTree(questionTopics)}
+              {renderTopicTree(questionBank)}
             </div>
           </CardContent>
         </Card>
@@ -273,9 +239,9 @@ export function QuestionBankPage() {
         {/* Main Content */}
         <div className="lg:col-span-3 space-y-6">
           {/* Filters */}
-          <Card className="bg-gradient-card border-0 shadow-soft">
+          <Card>
             <CardContent className="p-4">
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col gap-4">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
@@ -285,10 +251,10 @@ export function QuestionBankPage() {
                     className="pl-9"
                   />
                 </div>
-                
-                <div className="flex gap-2">
+
+                <div className="flex flex-wrap gap-2">
                   <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                    <SelectTrigger className="w-[120px]">
+                    <SelectTrigger className="w-[130px]">
                       <SelectValue placeholder="Difficulty" />
                     </SelectTrigger>
                     <SelectContent>
@@ -298,6 +264,30 @@ export function QuestionBankPage() {
                       <SelectItem value="Hard">Hard</SelectItem>
                     </SelectContent>
                   </Select>
+
+                  <Select value={selectedType} onValueChange={setSelectedType}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      {questionTypes.map(type => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                    <SelectTrigger className="w-[130px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="needs_review">Needs Review</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>
@@ -305,147 +295,171 @@ export function QuestionBankPage() {
 
           {/* Questions List */}
           <div className="space-y-4">
-            {questions.map((question) => (
-              <Card key={question.id} className="bg-gradient-card border-0 shadow-soft">
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    {/* Question Header */}
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline" className={getTypeColor(question.type)}>
-                            {question.type}
-                          </Badge>
-                          <Badge variant="outline" className={getDifficultyColor(question.difficulty)}>
-                            {question.difficulty}
-                          </Badge>
-                          <Badge variant="outline" className={getStatusColor(question.reviewStatus)}>
-                            {question.reviewStatus.replace('_', ' ')}
-                          </Badge>
-                          {question.mistakes.length > 0 && (
-                            <Badge variant="outline" className="bg-destructive/10 text-destructive">
-                              <AlertTriangle className="h-3 w-3 mr-1" />
-                              Has Issues
+            {filteredQuestions.length > 0 ? (
+              filteredQuestions.map((question, index) => (
+                <Card key={question.id || index}>
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      {/* Question Header */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            {question.type && (
+                              <Badge className={getTypeColor(question.type)}>
+                                {question.type}
+                              </Badge>
+                            )}
+                            <Badge className={getDifficultyColor(question.difficulty)}>
+                              {question.difficulty}
                             </Badge>
-                          )}
-                        </div>
-                        
-                        <div 
-                          className="prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: question.question }}
-                        />
-                        
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
-                          <span>By {question.createdBy}</span>
-                          <span>•</span>
-                          <span>{question.createdAt}</span>
-                          <span>•</span>
-                          <span>{question.comments.length} comments</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm">
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* MCQ Options */}
-                    {question.type === 'MCQ' && question.options && (
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <h4 className="font-medium text-sm mb-2">Answer Options:</h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {question.options.map((option, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <span className={`text-sm font-medium ${
-                                question.correctAnswer === String.fromCharCode(65 + index) 
-                                  ? 'text-success' : 'text-muted-foreground'
-                              }`}>
-                                {String.fromCharCode(65 + index)}.
-                              </span>
-                              <span className={
-                                question.correctAnswer === String.fromCharCode(65 + index) 
-                                  ? 'text-success font-medium' : ''
-                              }>
-                                {option}
-                              </span>
-                              {question.correctAnswer === String.fromCharCode(65 + index) && (
-                                <Badge variant="outline" className="bg-success/10 text-success ml-auto">
-                                  Correct
-                                </Badge>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Explanation */}
-                    {question.explanation && (
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <h4 className="font-medium text-sm mb-2">Explanation:</h4>
-                        <p className="text-sm">{question.explanation}</p>
-                      </div>
-                    )}
-
-                    {/* Comments Section */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium text-sm">Comments ({question.comments.length})</h4>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowCommentBox(showCommentBox === question.id ? null : question.id)}
-                        >
-                          <MessageSquare className="h-4 w-4 mr-1" />
-                          Add Comment
-                        </Button>
-                      </div>
-
-                      {/* Existing Comments */}
-                      {question.comments.map((comment) => (
-                        <div key={comment.id} className="bg-muted/20 rounded-lg p-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm">{comment.user}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-muted-foreground">{comment.createdAt}</span>
-                              {comment.type === 'approved' && <ThumbsUp className="h-3 w-3 text-success" />}
-                              {comment.type === 'needs_edit' && <Edit className="h-3 w-3 text-warning" />}
-                            </div>
+                            <Badge className={getStatusColor(question.status)}>
+                              {question.status?.replace('_', ' ')}
+                            </Badge>
                           </div>
-                          <p className="text-sm">{comment.text}</p>
-                        </div>
-                      ))}
 
-                      {/* Add Comment Box */}
-                      {showCommentBox === question.id && (
-                        <div className="space-y-3">
-                          <RichTextEditor
-                            content={commentText}
-                            onChange={setCommentText}
-                            placeholder="Add your review comment... You can use rich text, code blocks, and mathematical formulas."
-                          />
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={() => setShowCommentBox(null)}>
-                              Cancel
-                            </Button>
-                            <Button onClick={() => handleAddComment(question.id)}>
-                              Add Comment
-                            </Button>
+                          <div className="prose prose-sm max-w-none mb-2">
+                            <h3 className="text-base font-medium">{question.question}</h3>
+                          </div>
+
+                          <div className="text-xs text-muted-foreground mb-2">
+                            {question.topicPath}
+                          </div>
+
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>By {question.createdBy}</span>
+                            <span>•</span>
+                            <span>{question.createdAt}</span>
+                            <span>•</span>
+                            <span>{question.comments?.length || 0} comments</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* MCQ Options */}
+                      {question.type === 'Multiple Choice' && question.options && (
+                        <div className="bg-muted/30 rounded-lg p-4">
+                          <h4 className="font-medium text-sm mb-2">Answer Options:</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {question.options.map((option, index) => (
+                              <div key={index} className="flex items-center gap-2">
+                                <span className={`text-sm font-medium ${question.correctAnswer === String.fromCharCode(65 + index)
+                                  ? 'text-green-600' : 'text-muted-foreground'
+                                  }`}>
+                                  {String.fromCharCode(65 + index)}.
+                                </span>
+                                <span className={
+                                  question.correctAnswer === String.fromCharCode(65 + index)
+                                    ? 'text-green-600 font-medium' : ''
+                                }>
+                                  {option}
+                                </span>
+                                {question.correctAnswer === String.fromCharCode(65 + index) && (
+                                  <Badge className="bg-green-100 text-green-800 ml-auto">
+                                    Correct
+                                  </Badge>
+                                )}
+                              </div>
+                            ))}
                           </div>
                         </div>
                       )}
+
+                      {/* Short/Long Answer */}
+                      {(question.type === 'Short Answer' || question.type === 'Long Answer') && question.correctAnswer && (
+                        <div className="bg-muted/30 rounded-lg p-4">
+                          <h4 className="font-medium text-sm mb-2">Expected Answer:</h4>
+                          <p className="text-sm">{question.correctAnswer}</p>
+                        </div>
+                      )}
+
+                      {/* Explanation */}
+                      {question.explanation && (
+                        <div className="bg-muted/30 rounded-lg p-4">
+                          <h4 className="font-medium text-sm mb-2">Explanation:</h4>
+                          <p className="text-sm">{question.explanation}</p>
+                        </div>
+                      )}
+
+                      {/* Comments Section */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium text-sm">Comments ({question.comments?.length || 0})</h4>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowCommentBox(showCommentBox === question.id ? null : question.id)}
+                          >
+                            <MessageSquare className="h-4 w-4 mr-1" />
+                            Add Comment
+                          </Button>
+                        </div>
+
+                        {/* Existing Comments */}
+                        {question.comments?.map((comment) => (
+                          <div key={comment.id} className="bg-muted/20 rounded-lg p-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm">{comment.user}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">{comment.createdAt}</span>
+                                {comment.type === 'approved' && <ThumbsUp className="h-3 w-3 text-green-600" />}
+                                {comment.type === 'needs_edit' && <Edit className="h-3 w-3 text-yellow-600" />}
+                                {comment.type === 'suggestion' && <MessageSquare className="h-3 w-3 text-blue-600" />}
+                              </div>
+                            </div>
+                            <p className="text-sm">{comment.text}</p>
+                          </div>
+                        ))}
+
+                        {/* Add Comment Box */}
+                        {showCommentBox === question.id && (
+                          <div className="space-y-3">
+                            <Select
+                              value={commentType}
+                              onValueChange={setCommentType}
+                              defaultValue="suggestion"
+                            >
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Comment type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="suggestion">Suggestion</SelectItem>
+                                <SelectItem value="approved">Approval</SelectItem>
+                                <SelectItem value="needs_edit">Needs Edit</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <textarea
+                              value={commentText}
+                              onChange={(e) => setCommentText(e.target.value)}
+                              placeholder="Add your review comment..."
+                              className="w-full min-h-[100px] p-3 border rounded-lg resize-none"
+                            />
+                            <div className="flex justify-end gap-2">
+                              <Button variant="outline" onClick={() => {
+                                setShowCommentBox(null);
+                                setCommentText('');
+                              }}>
+                                Cancel
+                              </Button>
+                              <Button onClick={() => handleAddComment(question.id)}>
+                                Add Comment
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card>
+                <CardContent className="py-8 text-center">
+                  <div className="text-muted-foreground">
+                    No questions found matching your criteria
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
         </div>
       </div>

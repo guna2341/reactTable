@@ -21,12 +21,14 @@ import {
     FolderPlus,
     Folder,
     FolderOpen,
-    Ellipsis
+    User,
+    MessageSquare
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useQuestionStore } from '../../zustand/admin/questionBank';
 
 function TopicModal({
     isOpen,
@@ -87,48 +89,7 @@ function TopicModal({
 }
 
 export default function QuestionCreator() {
-    const [topics, setTopics] = useState([
-        {
-            id: 'math',
-            name: 'Mathematics',
-            questions: [],
-            children: [
-                {
-                    id: 'algebra',
-                    name: 'Algebra',
-                    questions: [],
-                    children: [
-                        { id: 'basic-algebra', name: 'Basic Operations', questions: [] },
-                        { id: 'linear-equations', name: 'Linear Equations', questions: [] }
-                    ]
-                },
-                {
-                    id: 'geometry',
-                    name: 'Geometry',
-                    questions: [],
-                    children: [
-                        { id: 'basic-shapes', name: 'Basic Shapes', questions: [] }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'science',
-            name: 'Science',
-            questions: [],
-            children: [
-                {
-                    id: 'physics',
-                    name: 'Physics',
-                    questions: [],
-                    children: [
-                        { id: 'mechanics', name: 'Mechanics', questions: [] }
-                    ]
-                }
-            ]
-        }
-    ]);
-
+    const { questionBank, addTopic, addQuestionToTopic, updateQuestionInTopic, deleteQuestionFromTopic, deleteTopicFromBank } = useQuestionStore();
     const [activeTopic, setActiveTopic] = useState('math');
     const [expandedTopics, setExpandedTopics] = useState(['math', 'algebra', 'science', 'physics']);
     const [newTopicName, setNewTopicName] = useState('');
@@ -136,14 +97,16 @@ export default function QuestionCreator() {
     const [currentParentId, setCurrentParentId] = useState(null);
     const [previewMode, setPreviewMode] = useState(false);
     const [editingQuestion, setEditingQuestion] = useState(null);
+    const [newComment, setNewComment] = useState('');
 
     const [questionForm, setQuestionForm] = useState({
         question: '',
-        type: 'MCQ',
+        type: 'Multiple Choice',
         difficulty: 'Easy',
         options: ['', '', '', ''],
         correctAnswer: '',
-        explanation: ''
+        explanation: '',
+        comments: []
     });
 
     const findTopicById = (topics, id) => {
@@ -179,33 +142,6 @@ export default function QuestionCreator() {
         return count;
     };
 
-    const updateTopicInStructure = (topics, targetId, updater) => {
-        return topics.map(topic => {
-            if (topic.id === targetId) {
-                return updater(topic);
-            }
-            if (topic.children) {
-                return {
-                    ...topic,
-                    children: updateTopicInStructure(topic.children, targetId, updater)
-                };
-            }
-            return topic;
-        });
-    };
-
-    const removeTopicFromStructure = (topics, targetId) => {
-        return topics.filter(topic => topic.id !== targetId).map(topic => {
-            if (topic.children) {
-                return {
-                    ...topic,
-                    children: removeTopicFromStructure(topic.children, targetId)
-                };
-            }
-            return topic;
-        });
-    };
-
     const handleAddTopic = (parentId = null) => {
         setCurrentParentId(parentId);
         setNewTopicName('');
@@ -222,37 +158,11 @@ export default function QuestionCreator() {
             children: []
         };
 
-        if (currentParentId) {
-            setTopics(updateTopicInStructure(topics, currentParentId, (topic) => ({
-                ...topic,
-                children: [...(topic.children || []), newTopic]
-            })));
-            setExpandedTopics(prev => [...prev, currentParentId]);
-        } else {
-            setTopics([...topics, newTopic]);
-        }
-
+        addTopic(newTopic, currentParentId);
         setShowTopicModal(false);
         setActiveTopic(newTopic.id);
-    };
-
-    const deleteTopic = (topicId) => {
-        const topicToDelete = findTopicById(topics, topicId);
-        if (!topicToDelete) return;
-
-        const hasContent = (topicToDelete.questions?.length > 0) || (topicToDelete.children?.length > 0);
-
-        if (hasContent && !confirm('This topic contains questions or subtopics. Are you sure you want to delete it?')) {
-            return;
-        }
-
-        setTopics(removeTopicFromStructure(topics, topicId));
-
-        if (activeTopic === topicId) {
-            const remainingTopics = removeTopicFromStructure(topics, topicId);
-            if (remainingTopics.length > 0) {
-                setActiveTopic(remainingTopics[0].id);
-            }
+        if (currentParentId) {
+            setExpandedTopics(prev => [...prev, currentParentId]);
         }
     };
 
@@ -267,11 +177,12 @@ export default function QuestionCreator() {
     const resetForm = () => {
         setQuestionForm({
             question: '',
-            type: 'MCQ',
+            type: 'Multiple Choice',
             difficulty: 'Easy',
             options: ['', '', '', ''],
             correctAnswer: '',
-            explanation: ''
+            explanation: '',
+            comments: []
         });
         setEditingQuestion(null);
     };
@@ -282,38 +193,57 @@ export default function QuestionCreator() {
         const newQuestion = {
             id: Date.now().toString(),
             ...questionForm,
+            status: 'pending',
             createdAt: new Date().toISOString().split('T')[0],
             createdBy: 'Current User'
         };
 
-        setTopics(updateTopicInStructure(topics, activeTopic, (topic) => ({
-            ...topic,
-            questions: [...(topic.questions || []), newQuestion]
-        })));
-
+        addQuestionToTopic(activeTopic, newQuestion);
         resetForm();
     };
 
     const editQuestion = (question) => {
-        setQuestionForm(question);
+        setQuestionForm({
+            ...question,
+            comments: question.comments || []
+        });
         setEditingQuestion(question.id);
     };
 
     const updateQuestion = () => {
-        setTopics(updateTopicInStructure(topics, activeTopic, (topic) => ({
-            ...topic,
-            questions: topic.questions.map(q =>
-                q.id === editingQuestion ? { ...questionForm, id: editingQuestion } : q
-            )
-        })));
+        const updatedQuestion = {
+            ...questionForm,
+            id: editingQuestion,
+            status: 'approved',
+            createdAt: new Date().toISOString().split('T')[0],
+            createdBy: 'Current User'
+        };
+
+        updateQuestionInTopic(activeTopic, updatedQuestion);
         resetForm();
     };
 
     const deleteQuestion = (questionId) => {
-        setTopics(updateTopicInStructure(topics, activeTopic, (topic) => ({
-            ...topic,
-            questions: topic.questions.filter(q => q.id !== questionId)
-        })));
+        deleteQuestionFromTopic(activeTopic, questionId);
+    };
+
+    const deleteTopic = (topicId) => {
+        const topicToDelete = findTopicById(questionBank, topicId);
+        if (!topicToDelete) return;
+
+        const hasContent = (topicToDelete.questions?.length > 0) || (topicToDelete.children?.length > 0);
+
+        if (hasContent && !confirm('This topic contains questions or subtopics. Are you sure you want to delete it?')) {
+            return;
+        }
+
+        deleteTopicFromBank(topicId);
+
+        if (activeTopic === topicId) {
+            if (questionBank.length > 0) {
+                setActiveTopic(questionBank[0].id);
+            }
+        }
     };
 
     const handleOptionChange = (index, value) => {
@@ -348,9 +278,53 @@ export default function QuestionCreator() {
         }
     };
 
+    const addCommentToForm = () => {
+        if (!newComment.trim()) return;
+
+        const comment = {
+            id: Date.now().toString(),
+            user: 'Current User',
+            text: newComment,
+            type: 'comment',
+            createdAt: new Date().toISOString()
+        };
+
+        setQuestionForm(prev => ({
+            ...prev,
+            comments: [...prev.comments, comment]
+        }));
+
+        setNewComment('');
+    };
+
+    const addCommentToQuestion = (questionId) => {
+        if (!newComment.trim()) return;
+
+        const activeTopicData = findTopicById(questionBank, activeTopic);
+        const question = activeTopicData?.questions?.find(q => q.id === questionId);
+        if (!question) return;
+
+        const updatedQuestion = {
+            ...question,
+            comments: [
+                ...(question.comments || []),
+                {
+                    id: Date.now().toString(),
+                    user: 'Current User',
+                    text: newComment,
+                    type: 'comment',
+                    createdAt: new Date().toISOString()
+                }
+            ]
+        };
+
+        updateQuestionInTopic(activeTopic, updatedQuestion);
+        setNewComment('');
+    };
+
     const getTypeColor = (type) => {
         switch (type) {
-            case 'MCQ':
+            case 'Multiple Choice':
                 return 'bg-blue-100 text-blue-800';
             case 'Short Answer':
                 return 'bg-green-100 text-green-800';
@@ -368,6 +342,21 @@ export default function QuestionCreator() {
             case 'Medium':
                 return 'bg-yellow-100 text-yellow-800';
             case 'Hard':
+                return 'bg-red-100 text-red-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
+        }
+    };
+
+    const getCommentTypeColor = (type) => {
+        switch (type) {
+            case 'approved':
+                return 'bg-green-100 text-green-800';
+            case 'suggestion':
+                return 'bg-blue-100 text-blue-800';
+            case 'needs_edit':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'rejected':
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
@@ -413,8 +402,7 @@ export default function QuestionCreator() {
                                                 <TooltipTrigger asChild>
                                                     <span className="truncate">{topic.name}</span>
                                                 </TooltipTrigger>
-                                                <TooltipContent
-                                                >{topic.name}fsf</TooltipContent>
+                                                <TooltipContent>{topic.name}</TooltipContent>
                                             </Tooltip>
                                         </div>
                                     </Button>
@@ -450,15 +438,6 @@ export default function QuestionCreator() {
 
                             {hasHiddenChildren && (
                                 <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div
-                                            className="flex items-center ml-8 mt-1 text-xs text-muted-foreground hover:text-foreground"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <Ellipsis className="h-4 w-4 mr-1" />
-                                            {topic.children.length} hidden subtopic{topic.children.length !== 1 ? 's' : ''}
-                                        </div>
-                                    </TooltipTrigger>
                                     <TooltipContent
                                         side="right"
                                         align="start"
@@ -492,9 +471,9 @@ export default function QuestionCreator() {
         });
     };
 
-    const activeTopicData = findTopicById(topics, activeTopic);
-    const topicPath = getTopicPath(topics, activeTopic);
-    const totalQuestions = topics.reduce((sum, topic) => sum + countQuestions(topic), 0);
+    const activeTopicData = findTopicById(questionBank, activeTopic);
+    const topicPath = getTopicPath(questionBank, activeTopic);
+    const totalQuestions = questionBank.reduce((sum, topic) => sum + countQuestions(topic), 0);
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -511,7 +490,7 @@ export default function QuestionCreator() {
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Question Creator</h1>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                        Create and organize questions with unlimited topic hierarchy
+                        Create and organize questions
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -550,7 +529,7 @@ export default function QuestionCreator() {
                             </Button>
 
                             <div className="space-y-1 overflow-y-auto overflow-x-auto max-h-[calc(100vh-300px)] scrollbar-none">
-                                {renderTopicTree(topics)}
+                                {renderTopicTree(questionBank)}
                             </div>
                         </CardContent>
                     </Card>
@@ -607,12 +586,15 @@ export default function QuestionCreator() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="type">Question Type</Label>
-                                            <Select value={questionForm.type} onValueChange={(value) => setQuestionForm({ ...questionForm, type: value })}>
+                                            <Select
+                                                value={questionForm.type}
+                                                onValueChange={(value) => setQuestionForm({ ...questionForm, type: value })}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select type" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="MCQ">Multiple Choice</SelectItem>
+                                                    <SelectItem value="Multiple Choice">Multiple Choice</SelectItem>
                                                     <SelectItem value="Short Answer">Short Answer</SelectItem>
                                                     <SelectItem value="Long Answer">Long Answer</SelectItem>
                                                 </SelectContent>
@@ -621,7 +603,10 @@ export default function QuestionCreator() {
 
                                         <div className="space-y-2">
                                             <Label htmlFor="difficulty">Difficulty</Label>
-                                            <Select value={questionForm.difficulty} onValueChange={(value) => setQuestionForm({ ...questionForm, difficulty: value })}>
+                                            <Select
+                                                value={questionForm.difficulty}
+                                                onValueChange={(value) => setQuestionForm({ ...questionForm, difficulty: value })}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select difficulty" />
                                                 </SelectTrigger>
@@ -634,7 +619,7 @@ export default function QuestionCreator() {
                                         </div>
                                     </div>
 
-                                    {questionForm.type === 'MCQ' && (
+                                    {questionForm.type === 'Multiple Choice' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
                                                 <Label>Answer Options</Label>
@@ -675,7 +660,10 @@ export default function QuestionCreator() {
 
                                             <div className="space-y-2">
                                                 <Label>Correct Answer</Label>
-                                                <Select value={questionForm.correctAnswer} onValueChange={(value) => setQuestionForm({ ...questionForm, correctAnswer: value })}>
+                                                <Select
+                                                    value={questionForm.correctAnswer}
+                                                    onValueChange={(value) => setQuestionForm({ ...questionForm, correctAnswer: value })}
+                                                >
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select correct answer" />
                                                     </SelectTrigger>
@@ -715,6 +703,58 @@ export default function QuestionCreator() {
                                             onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
                                             className="min-h-[80px]"
                                         />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label>Comments</Label>
+                                        <div className="space-y-3">
+                                            {questionForm.comments?.map((comment, index) => (
+                                                <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                                    <div className="bg-gray-100 rounded-full p-1">
+                                                        <User className="h-4 w-4" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-medium text-sm">{comment.user}</span>
+                                                            {comment.type && comment.type !== 'comment' && (
+                                                                <Badge className={getCommentTypeColor(comment.type)}>
+                                                                    {comment.type.replace('_', ' ')}
+                                                                </Badge>
+                                                            )}
+                                                        
+                                                            <span className="text-xs text-muted-foreground">
+                                                                {new Date(comment.createdAt).toLocaleString()}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-sm text-gray-700 mt-1">{comment.text}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="comment">Add Comment</Label>
+                                        <div className="flex gap-2">
+                                            <Input
+                                                id="comment"
+                                                placeholder="Add a comment about this question..."
+                                                value={newComment}
+                                                onChange={(e) => setNewComment(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && newComment.trim()) {
+                                                        addCommentToForm();
+                                                    }
+                                                }}
+                                                className="flex-1"
+                                            />
+                                            <Button
+                                                onClick={addCommentToForm}
+                                                disabled={!newComment.trim()}
+                                            >
+                                                Add
+                                            </Button>
+                                        </div>
                                     </div>
 
                                     <div className="flex gap-3">
@@ -766,6 +806,11 @@ export default function QuestionCreator() {
                                                         <Badge className={getDifficultyColor(question.difficulty)}>
                                                             {question.difficulty}
                                                         </Badge>
+                                                        {question.status && (
+                                                            <Badge variant="outline">
+                                                                {question.status.replace('_', ' ')}
+                                                            </Badge>
+                                                        )}
                                                     </div>
                                                     <p className="font-medium">{question.question}</p>
                                                 </div>
@@ -791,14 +836,14 @@ export default function QuestionCreator() {
                                                 )}
                                             </div>
 
-                                            {question.type === 'MCQ' && question.options && (
+                                            {question.type === 'Multiple Choice' && question.options && (
                                                 <div className="bg-gray-50 rounded-lg p-3 space-y-2">
                                                     <p className="font-medium text-sm">Options:</p>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                         {question.options.map((option, optIndex) => (
                                                             <div key={optIndex} className="flex items-center gap-2">
                                                                 <span className={`text-sm font-medium ${question.correctAnswer === String.fromCharCode(65 + optIndex)
-                                                                        ? 'text-green-600' : 'text-gray-500'
+                                                                    ? 'text-green-600' : 'text-gray-500'
                                                                     }`}>
                                                                     {String.fromCharCode(65 + optIndex)}.
                                                                 </span>
@@ -817,7 +862,7 @@ export default function QuestionCreator() {
                                                 </div>
                                             )}
 
-                                            {question.type !== 'MCQ' && question.correctAnswer && (
+                                            {question.type !== 'Multiple Choice' && question.correctAnswer && (
                                                 <div className="bg-gray-50 rounded-lg p-3">
                                                     <p className="font-medium text-sm mb-1">Expected Answer:</p>
                                                     <p className="text-sm text-gray-700 whitespace-pre-wrap">{question.correctAnswer}</p>
@@ -830,6 +875,60 @@ export default function QuestionCreator() {
                                                     <p className="text-sm text-gray-700 whitespace-pre-wrap">{question.explanation}</p>
                                                 </div>
                                             )}
+
+                                            {question.comments && question.comments.length > 0 && (
+                                                <div className="border-t pt-3 mt-3">
+                                                    <div className="flex items-center gap-2 mb-3">
+                                                        <MessageSquare className="h-4 w-4" />
+                                                        <h4 className="font-medium">Comments ({question.comments.length})</h4>
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        {question.comments.map((comment, commentIndex) => (
+                                                            <div key={commentIndex} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                                                <div className="bg-gray-100 rounded-full p-1">
+                                                                    <User className="h-4 w-4" />
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="font-medium text-sm">{comment.user}</span>
+                                                                        {comment.type && comment.type !== 'comment' && (
+                                                                            <Badge className={getCommentTypeColor(comment.type)}>
+                                                                                {comment.type.replace('_', ' ')}
+                                                                            </Badge>
+                                                                        )}
+                                                                        <span className="text-xs text-muted-foreground">
+                                                                            {new Date(comment.createdAt).toLocaleString()}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="text-sm text-gray-700 mt-1">{comment.text}</p>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div className="border-t pt-3">
+                                                <div className="flex gap-2">
+                                                    <Input
+                                                        placeholder="Add a comment..."
+                                                        value={newComment}
+                                                        onChange={(e) => setNewComment(e.target.value)}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter' && newComment.trim()) {
+                                                                addCommentToQuestion(question.id);
+                                                            }
+                                                        }}
+                                                        className="flex-1"
+                                                    />
+                                                    <Button
+                                                        onClick={() => addCommentToQuestion(question.id)}
+                                                        disabled={!newComment.trim()}
+                                                    >
+                                                        Comment
+                                                    </Button>
+                                                </div>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>

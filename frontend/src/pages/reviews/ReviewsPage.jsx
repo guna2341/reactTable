@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { ContentReviewComponent } from '../content/ContentReview';
 import { useReviewStore } from '../../zustand/reviewer/reviewsState';
 import { useState } from 'react';
 
@@ -125,7 +126,7 @@ export function ReviewsPage() {
                         {question.reviewsCompleted}/{question.reviewsNeeded} reviews
                       </Badge>
                       <Badge variant="outline">
-                        {question.kind}  
+                      {question.kind}  
                       </Badge>
                     </div>
 
@@ -206,7 +207,7 @@ export function ReviewsPage() {
                   <h4 className="font-medium">Your Review</h4>
                   <RichTextEditor
                     content={reviewComments[question.id] || ''}
-                    onChange={(content) => setReviewComment(question.id, content)}
+                    onChange={(content) => handleCommentChange(question.id, content)}
                     placeholder="Provide detailed feedback on this question..."
                   />
                   <div className="flex items-center gap-3">
