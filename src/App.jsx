@@ -27,6 +27,14 @@ import CreateLearningUnitsPage from "./pages/createLearningUnits";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }) {
+  let role = "admin";
+  const routes = [
+    {
+      "admin": ["admin", "reviewer", "student"],
+      "reviewer": ["reviewer", "student"],
+      "student": ["student"]
+    }
+  ];
   const { isAuthenticated } = useAuthStore();
   return isAuthenticated ? <div className="h-screen">{children}</div> : <Navigate to="/login" replace />;
 }

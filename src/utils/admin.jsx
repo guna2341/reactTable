@@ -167,245 +167,320 @@ export const contentUnits = [
             createdBy: 'Dr. Smith',
             createdAt: '2024-01-15'
         },
+    },
+    {
+        id: '5',
+        code: 'MATH-401',
+        title: 'Introduction to Algebra',
+        description: 'Basic algebraic concepts and operations',
+        content: "<p>Demo Image</p>",
+        imageLink: "https://tse2.mm.bing.net/th/id/OIP.7cRYFyLoDEDh4sRtM73vvwHaDg?pid=Api&P=0&h=180",
+        language: 'en',
+        explanation: 'This unit introduces algebraic concepts like variables, constants, expressions, and equations.',
+        status: 'needs edit',
+        questionsCount: 12,
+        studentsEnrolled: 45,
+        createdAt: '2024-01-15',
+        updatedAt: '2024-01-20',
+        createdBy: 'Dr. Smith',
+        questionType: "content",
+        totalReviews: 3,
+        minimumReviews: 3,
+        questions:
+        {
+            id: 'q1',
+            question: 'What is a variable in algebra?',
+            type: 'Multiple Choice',
+            options: [
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2933",
+                    isCorrect: true,
+                    text: "option a"
+                },
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2934",
+                    isCorrect: false,
+                    text: "option b"
+                },
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2935",
+                    isCorrect: false,
+                    text: "option c"
+                },
+                {
+                    id: "a0018813-3476-4440-a27c-a4d5ed8b2936",
+                    isCorrect: false,
+                    text: "option d"
+                },
+
+            ],
+            topic: 'variables',
+            difficulty: 'Easy',
+            correctAnswer: 'a',
+            explanation: 'A variable is a placeholder for a value that can change, commonly represented by letters.',
+            createdBy: 'Dr. Smith',
+            createdAt: '2024-01-15'
+        },
     }
 ];
 
-export const questionBank = [
-    {
-        id: 'math',
-        name: 'Mathematics',
-        children: [
-            {
-                id: 'algebra',
-                name: 'Algebra',
-                questions: [],
-                children: [
-                    {
-                        id: 'basic-algebra',
-                        name: 'Basic Operations',
-                        questionCount: 25,
-                        questions: [
-                            {
-                                question: 'Solve for x: 2x + 5 = 13',
-                                difficulty: 'Easy',
-                                options: ['x = 4', 'x = 6', 'x = 8', 'x = 9'],
-                                correctAnswer: 'A',
-                                explanation: 'Subtract 5 from both sides: 2x = 8, then divide by 2: x = 4',
-                                status: 'approved',
-                                createdBy: 'Dr. Smith',
-                                createdAt: '2024-01-15',
-                                comments: [
-                                    {
-                                        id: '1',
-                                        user: 'Reviewer A',
-                                        text: 'Clear and well-structured question.',
-                                        type: 'approved',
-                                        createdAt: '2024-01-16',
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id: 'equations',
-                        name: 'Linear Equations',
-                        questionCount: 18,
-                        questions: [
-                            {
-                                id: '4',
-                                question: 'Find the value of x: 3x - 7 = 11',
-                                difficulty: 'Easy',
-                                options: ['x = 4', 'x = 6', 'x = 5', 'x = 7'],
-                                correctAnswer: 'B',
-                                explanation: 'Add 7 to both sides: 3x = 18, then divide by 3: x = 6',
-                                status: 'approved',
-                                createdBy: 'Dr. Lin',
-                                createdAt: '2024-01-12',
-                                comments: [],
-                            },
-                        ],
-                    },
-                    {
-                        id: 'quadratic',
-                        name: 'Quadratic Equations',
-                        questionCount: 12,
-                        questions: [
-                            {
-                                id: '5',
-                                question: 'Solve: x² - 5x + 6 = 0',
-                                difficulty: 'Medium',
-                                options: ['x = 1 or x = 6', 'x = 2 or x = 3', 'x = -2 or x = -3', 'x = 0'],
-                                correctAnswer: 'B',
-                                explanation: 'Factor the equation: (x - 2)(x - 3) = 0, so x = 2 or x = 3',
-                                status: 'approved',
-                                createdBy: 'Dr. Patel',
-                                createdAt: '2024-01-10',
-                                comments: [],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                id: 'geometry',
-                name: 'Geometry',
-                children: [
-                    {
-                        id: 'basic-shapes',
-                        name: 'Basic Shapes',
-                        questionCount: 15,
-                        questions: [
-                            {
-                                id: '6',
-                                question: 'How many sides does a hexagon have?',
-                                type: 'Multiple Choice',
-                                difficulty: 'Easy',
-                                options: ['5', '6', '7', '8'],
-                                correctAnswer: 'B',
-                                explanation: 'A hexagon has 6 sides.',
-                                status: 'approved',
-                                createdBy: 'Prof. Alice',
-                                createdAt: '2024-01-17',
-                                comments: [],
-                            },
-                        ],
-                    },
-                    {
-                        id: 'triangles',
-                        name: 'Triangles',
-                        questionCount: 22,
-                        questions: [
-                            {
-                                id: '2',
-                                question: 'What is the area of a triangle with base 10 cm and height 8 cm?',
-                                type: 'Short Answer',
-                                topic: 'triangles',
-                                difficulty: 'Medium',
-                                correctAnswer: '40 square cm',
-                                explanation: 'Area of triangle = (1/2) × base × height = (1/2) × 10 × 8 = 40 sq cm',
-                                status: 'pending',
-                                createdBy: 'Prof. Johnson',
-                                createdAt: '2024-01-18',
-                                comments: [
-                                    {
-                                        id: '2',
-                                        user: 'Reviewer B',
-                                        text: 'Consider adding a diagram for better understanding.',
-                                        type: 'suggestion',
-                                        createdAt: '2024-01-19',
-                                    },
-                                ],
-                            },
-                            {
-                                id: '7',
-                                question: 'What is the sum of interior angles in any triangle?',
-                                type: 'Multiple Choice',
-                                difficulty: 'Easy',
-                                options: ['180°', '360°', '90°', '270°'],
-                                correctAnswer: 'A',
-                                explanation: 'The sum of the interior angles in a triangle is always 180°.',
-                                status: 'approved',
-                                createdBy: 'Dr. Green',
-                                createdAt: '2024-01-19',
-                                comments: [],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        id: 'science',
-        name: 'Science',
-        children: [
-            {
-                id: 'physics',
-                name: 'Physics',
-                children: [
-                    {
-                        id: 'mechanics',
-                        name: 'Mechanics',
-                        questionCount: 30,
-                        questions: [
-                            {
-                                id: '3',
-                                question: 'Explain Newton first law of motion with an example.',
-                                type: 'Long Answer',
-                                topic: 'mechanics',
-                                difficulty: 'Hard',
-                                correctAnswer:
-                                    'An object at rest stays at rest and an object in motion stays in motion unless acted upon by an external force.',
-                                explanation:
-                                    'This law describes inertia - the tendency of objects to resist changes in their state of motion.',
-                                status: 'needs_review',
-                                createdBy: 'Dr. Williams',
-                                createdAt: '2024-01-20',
-                                comments: [
-                                    {
-                                        id: '3',
-                                        user: 'Reviewer C',
-                                        text: 'The question is good but needs more specific criteria for evaluation.',
-                                        type: 'needs_edit',
-                                        createdAt: '2024-01-21',
-                                    },
-                                ],
-                            },
-                            {
-                                id: '8',
-                                question: 'What is the SI unit of force?',
-                                type: 'Multiple Choice',
-                                difficulty: 'Easy',
-                                options: ['Newton', 'Joule', 'Watt', 'Pascal'],
-                                correctAnswer: 'A',
-                                explanation: 'The SI unit of force is the Newton (N).',
-                                status: 'approved',
-                                createdBy: 'Dr. Evans',
-                                createdAt: '2024-01-22',
-                                comments: [],
-                            },
-                        ],
-                    },
-                    {
-                        id: 'electricity',
-                        name: 'Electricity',
-                        questionCount: 20,
-                        questions: [
-                            {
-                                id: '9',
-                                question: 'Define electric current.',
-                                type: 'Short Answer',
-                                topic: 'electricity',
-                                difficulty: 'Medium',
-                                correctAnswer: 'The flow of electric charge through a conductor.',
-                                explanation:
-                                    'Electric current is defined as the rate at which charge flows through a surface.',
-                                status: 'approved',
-                                createdBy: 'Prof. Lee',
-                                createdAt: '2024-01-23',
-                                comments: [],
-                            },
-                            {
-                                id: '10',
-                                question: 'Which device is used to measure electric current?',
-                                type: 'Multiple Choice',
-                                difficulty: 'Easy',
-                                options: ['Voltmeter', 'Ammeter', 'Galvanometer', 'Ohmmeter'],
-                                correctAnswer: 'B',
-                                explanation: 'Electric current is measured using an ammeter.',
-                                status: 'approved',
-                                createdBy: 'Prof. Lee',
-                                createdAt: '2024-01-23',
-                                comments: [],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-];
-
+    export const questionBank = [
+        {
+            id: 'math',
+            name: 'Mathematics',
+            children: [
+                {
+                    id: 'algebra',
+                    name: 'Algebra',
+                    questions: [
+                        {
+                            id:'1',
+                            question: 'algebra',
+                            difficulty: 'Easy',
+                            options: ['x = 4', 'x = 6', 'x = 8', 'x = 9'],
+                            correctAnswer: 'A',
+                            explanation: 'Subtract 5 from both sides: 2x = 8, then divide by 2: x = 4',
+                            status: 'approved',
+                            createdBy: 'Dr. Smith',
+                            createdAt: '2024-01-15',
+                            comments: [
+                                {
+                                    id: '1',
+                                    user: 'Reviewer A',
+                                    text: 'Clear and well-structured question.',
+                                    type: 'approved',
+                                    createdAt: '2024-01-16',
+                                },
+                            ],
+                        }
+                    ],
+                    children: [
+                        {
+                            id: 'basic-algebra',
+                            name: 'Basic Operations',
+                            questionCount: 25,
+                            questions: [
+                                {
+                                    id: '2',
+                                    question: 'Solve for x: 2x + 5 = 13',
+                                    difficulty: 'Easy',
+                                    options: ['x = 4', 'x = 6', 'x = 8', 'x = 9'],
+                                    correctAnswer: 'A',
+                                    explanation: 'Subtract 5 from both sides: 2x = 8, then divide by 2: x = 4',
+                                    status: 'approved',
+                                    createdBy: 'Dr. Smith',
+                                    createdAt: '2024-01-15',
+                                    comments: [
+                                        {
+                                            id: '1',
+                                            user: 'Reviewer A',
+                                            text: 'Clear and well-structured question.',
+                                            type: 'approved',
+                                            createdAt: '2024-01-16',
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            id: 'equations',
+                            name: 'Linear Equations',
+                            questionCount: 18,
+                            questions: [
+                                {
+                                    id: '4',
+                                    question: 'Find the value of x: 3x - 7 = 11',
+                                    difficulty: 'Easy',
+                                    options: ['x = 4', 'x = 6', 'x = 5', 'x = 7'],
+                                    correctAnswer: 'B',
+                                    explanation: 'Add 7 to both sides: 3x = 18, then divide by 3: x = 6',
+                                    status: 'approved',
+                                    createdBy: 'Dr. Lin',
+                                    createdAt: '2024-01-12',
+                                    comments: [],
+                                },
+                            ],
+                        },
+                        {
+                            id: 'quadratic',
+                            name: 'Quadratic Equations',
+                            questionCount: 12,
+                            questions: [
+                                {
+                                    id: '5',
+                                    question: 'Solve: x² - 5x + 6 = 0',
+                                    difficulty: 'Medium',
+                                    options: ['x = 1 or x = 6', 'x = 2 or x = 3', 'x = -2 or x = -3', 'x = 0'],
+                                    correctAnswer: 'B',
+                                    explanation: 'Factor the equation: (x - 2)(x - 3) = 0, so x = 2 or x = 3',
+                                    status: 'approved',
+                                    createdBy: 'Dr. Patel',
+                                    createdAt: '2024-01-10',
+                                    comments: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id: 'geometry',
+                    name: 'Geometry',
+                    children: [
+                        {
+                            id: 'basic-shapes',
+                            name: 'Basic Shapes',
+                            questionCount: 15,
+                            questions: [
+                                {
+                                    id: '6',
+                                    question: 'How many sides does a hexagon have?',
+                                    type: 'Multiple Choice',
+                                    difficulty: 'Easy',
+                                    options: ['5', '6', '7', '8'],
+                                    correctAnswer: 'B',
+                                    explanation: 'A hexagon has 6 sides.',
+                                    status: 'approved',
+                                    createdBy: 'Prof. Alice',
+                                    createdAt: '2024-01-17',
+                                    comments: [],
+                                },
+                            ],
+                        },
+                        {
+                            id: 'triangles',
+                            name: 'Triangles',
+                            questionCount: 22,
+                            questions: [
+                                {
+                                    id: '8',
+                                    question: 'What is the area of a triangle with base 10 cm and height 8 cm?',
+                                    type: 'Short Answer',
+                                    topic: 'triangles',
+                                    difficulty: 'Medium',
+                                    correctAnswer: '40 square cm',
+                                    explanation: 'Area of triangle = (1/2) × base × height = (1/2) × 10 × 8 = 40 sq cm',
+                                    status: 'pending',
+                                    createdBy: 'Prof. Johnson',
+                                    createdAt: '2024-01-18',
+                                    comments: [
+                                        {
+                                            id: '2',
+                                            user: 'Reviewer B',
+                                            text: 'Consider adding a diagram for better understanding.',
+                                            type: 'suggestion',
+                                            createdAt: '2024-01-19',
+                                        },
+                                    ],
+                                },
+                                {
+                                    id: '7',
+                                    question: 'What is the sum of interior angles in any triangle?',
+                                    type: 'Multiple Choice',
+                                    difficulty: 'Easy',
+                                    options: ['180°', '360°', '90°', '270°'],
+                                    correctAnswer: 'A',
+                                    explanation: 'The sum of the interior angles in a triangle is always 180°.',
+                                    status: 'approved',
+                                    createdBy: 'Dr. Green',
+                                    createdAt: '2024-01-19',
+                                    comments: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            id: 'science',
+            name: 'Science',
+            children: [
+                {
+                    id: 'physics',
+                    name: 'Physics',
+                    children: [
+                        {
+                            id: 'mechanics',
+                            name: 'Mechanics',
+                            questionCount: 30,
+                            questions: [
+                                {
+                                    id: '3',
+                                    question: 'Explain Newton first law of motion with an example.',
+                                    type: 'Long Answer',
+                                    topic: 'mechanics',
+                                    difficulty: 'Hard',
+                                    correctAnswer:
+                                        'An object at rest stays at rest and an object in motion stays in motion unless acted upon by an external force.',
+                                    explanation:
+                                        'This law describes inertia - the tendency of objects to resist changes in their state of motion.',
+                                    status: 'needs_review',
+                                    createdBy: 'Dr. Williams',
+                                    createdAt: '2024-01-20',
+                                    comments: [
+                                        {
+                                            id: '3',
+                                            user: 'Reviewer C',
+                                            text: 'The question is good but needs more specific criteria for evaluation.',
+                                            type: 'needs_edit',
+                                            createdAt: '2024-01-21',
+                                        },
+                                    ],
+                                },
+                                {
+                                    id: '8',
+                                    question: 'What is the SI unit of force?',
+                                    type: 'Multiple Choice',
+                                    difficulty: 'Easy',
+                                    options: ['Newton', 'Joule', 'Watt', 'Pascal'],
+                                    correctAnswer: 'A',
+                                    explanation: 'The SI unit of force is the Newton (N).',
+                                    status: 'approved',
+                                    createdBy: 'Dr. Evans',
+                                    createdAt: '2024-01-22',
+                                    comments: [],
+                                },
+                            ],
+                        },
+                        {
+                            id: 'electricity',
+                            name: 'Electricity',
+                            questionCount: 20,
+                            questions: [
+                                {
+                                    id: '9',
+                                    question: 'Define electric current.',
+                                    type: 'Short Answer',
+                                    topic: 'electricity',
+                                    difficulty: 'Medium',
+                                    correctAnswer: 'The flow of electric charge through a conductor.',
+                                    explanation:
+                                        'Electric current is defined as the rate at which charge flows through a surface.',
+                                    status: 'approved',
+                                    createdBy: 'Prof. Lee',
+                                    createdAt: '2024-01-23',
+                                    comments: [],
+                                },
+                                {
+                                    id: '10',
+                                    question: 'Which device is used to measure electric current?',
+                                    type: 'Multiple Choice',
+                                    difficulty: 'Easy',
+                                    options: ['Voltmeter', 'Ammeter', 'Galvanometer', 'Ohmmeter'],
+                                    correctAnswer: 'B',
+                                    explanation: 'Electric current is measured using an ammeter.',
+                                    status: 'approved',
+                                    createdBy: 'Prof. Lee',
+                                    createdAt: '2024-01-23',
+                                    comments: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ];
 export const learningUnits = [
     {
         id: "1",

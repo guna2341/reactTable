@@ -20,7 +20,8 @@ import {
     Printer,
     Edit,
     Eye,
-    Shield
+    Shield,
+    Pencil
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -92,19 +93,21 @@ export function ContentViewPage() {
         }
     };
 
-    function getColor(status) {
+    const getColor = (status) => {
         switch (status) {
             case 'approved':
             case 'published':
-                return "bg-green-100 text-green-800";
+                return 'bg-success/10 text-success';
             case 'pending':
-                return "bg-yellow-100 text-yellow-800"
+                return 'bg-warning/10 text-warning';
             case 'rejected':
-                return "bg-red-100 text-red-800"
+                return 'bg-destructive/10 text-destructive';
+            case 'needs edit':
+                return 'bg-blue-100 text-blue-600';
             default:
-                return "bg-gray-100 text-gray-800"
+                return 'bg-muted/10 text-muted-foreground';
         }
-    }
+    };
 
     function getIcon(status) {
         switch (status) {
@@ -115,20 +118,13 @@ export function ContentViewPage() {
                 return <Clock className="h-4 w-4 mr-1" />
             case 'rejected':
                 return <XCircle className="h-4 w-4 mr-1" />;
+            case 'needs edit':
+                return <Pencil className="h-4 w-4 mr-1" />;
             default:
-                return "bg-gray-100 text-gray-800"
+                return <AlertCircle className="h-4 w-4 mr-1"/>;
         }
     }
 
-    const getReviewStatusBadge = (status) => {
-        switch (status) {
-            case 'approved':
-            case 'published':
-            case 'pending':
-            case 'rejected':
-            default:
-        }
-    };
 
 
     function handleReview() {
@@ -253,10 +249,6 @@ export function ContentViewPage() {
                                 {unit.code}
                             </Button>
                             <Button variant="outline">
-                                <ContentIcon className="h-3 w-3 mr-1" />
-                                {unit.contentType}
-                            </Button>
-                            <Button variant="outline">
                                 <StatusIcon className="h-3 w-3 mr-1" />
                                 {unit.status}
                             </Button>
@@ -369,7 +361,7 @@ export function ContentViewPage() {
                                                     <div className="p-4 bg-muted/20 rounded-lg">
                                                         <h4 className="font-medium mb-2">Answer:</h4>
                                                         {unit.questions.type === 'Short Answer' ? (
-                                                            <div className="p-3 bg-white rounded border border-muted">
+                                                            <div className="p-3 bg-white rounded-xl border border-muted">
                                                                 <p className="text-muted-foreground">[Short text answer input would appear here]</p>
                                                             </div>
                                                         ) : (

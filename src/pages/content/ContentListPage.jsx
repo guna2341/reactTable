@@ -30,7 +30,8 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  XCircle
+  XCircle,
+  Pencil
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAdminContentStore } from '../../zustand/admin/contentUnits';
@@ -74,7 +75,9 @@ export function ContentListPage() {
       case 'pending':
         return 'bg-warning/10 text-warning';
       case 'rejected':
-        return 'bg-destructive/10 text-destructive'; 
+        return 'bg-destructive/10 text-destructive';
+      case 'needs edit':
+        return 'bg-blue-100 text-blue-600';
       default:
         return 'bg-muted/10 text-muted-foreground';
     }
@@ -89,6 +92,8 @@ export function ContentListPage() {
         return Clock;
       case 'rejected':
         return XCircle;
+      case 'needs edit':
+        return Pencil;
       default:
         return AlertCircle;
     }
