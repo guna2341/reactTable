@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Educational Content Hub Design System - All colors MUST be HSL */
+
+@layer base {
+  :root {
+    /* Educational Theme Colors */
+    --background: 220 15% 97%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    /* Primary - Educational Blue */
+    --primary: 210 85% 45%;
+    --primary-foreground: 0 0% 98%;
+    --primary-light: 210 75% 55%;
+    --primary-dark: 210 95% 35%;
+
+    /* Secondary - Learning Green */
+    --secondary: 142 76% 36%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-light: 142 65% 46%;
+
+    /* Accent - Success Orange */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 98%;
+    --accent-light: 25 85% 63%;
+
+    /* Status Colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 45 93% 58%;
+    --warning-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Neutral Tones */
+    --muted: 220 13% 91%;
+    --muted-foreground: 215 16% 47%;
+    --border: 220 13% 88%;
+    --input: 220 13% 91%;
+    --ring: 210 85% 45%;
+
+    /* Educational Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary-dark)), hsl(var(--primary)), hsl(var(--accent-light)));
+    --gradient-card: linear-gradient(180deg, hsl(var(--card)), hsl(220 13% 96%));
+
+    /* Shadows */
+    --shadow-soft: 0 2px 8px hsl(var(--primary) / 0.1);
+    --shadow-medium: 0 4px 16px hsl(var(--primary) / 0.15);
+    --shadow-strong: 0 8px 32px hsl(var(--primary) / 0.2);
+
+    /* Border Radius */
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Theme for Educational Platform */
+    --background: 215 25% 8%;
+    --foreground: 220 15% 92%;
+
+    --card: 215 25% 10%;
+    --card-foreground: 220 15% 92%;
+
+    --popover: 215 25% 10%;
+    --popover-foreground: 220 15% 92%;
+
+    /* Primary - Educational Blue (Dark) */
+    --primary: 210 85% 60%;
+    --primary-foreground: 215 25% 8%;
+    --primary-light: 210 75% 70%;
+    --primary-dark: 210 95% 50%;
+
+    /* Secondary - Learning Green (Dark) */
+    --secondary: 142 76% 46%;
+    --secondary-foreground: 215 25% 8%;
+    --secondary-light: 142 65% 56%;
+
+    /* Accent - Success Orange (Dark) */
+    --accent: 25 95% 63%;
+    --accent-foreground: 215 25% 8%;
+    --accent-light: 25 85% 73%;
+
+    /* Status Colors (Dark) */
+    --success: 142 76% 46%;
+    --success-foreground: 215 25% 8%;
+    --warning: 45 93% 68%;
+    --warning-foreground: 215 25% 8%;
+    --destructive: 0 84% 70%;
+    --destructive-foreground: 215 25% 8%;
+
+    /* Neutral Tones (Dark) */
+    --muted: 215 20% 15%;
+    --muted-foreground: 220 13% 60%;
+    --border: 215 20% 18%;
+    --input: 215 20% 15%;
+    --ring: 210 85% 60%;
+
+    /* Educational Gradients (Dark) */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)), hsl(var(--accent-light)));
+    --gradient-card: linear-gradient(180deg, hsl(var(--card)), hsl(215 20% 12%));
+
+    /* Sidebar (Dark) */
+    --sidebar-background: 215 25% 8%;
+    --sidebar-foreground: 220 15% 92%;
+    --sidebar-primary: 210 85% 60%;
+    --sidebar-primary-foreground: 215 25% 8%;
+    --sidebar-accent: 215 20% 15%;
+    --sidebar-accent-foreground: 220 15% 92%;
+    --sidebar-border: 215 20% 18%;
+    --sidebar-ring: 210 85% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+/* Add these styles to your global CSS */
+.ProseMirror {
+  min-height: 200px;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+/* List styles */
+.ProseMirror ul,
+.ProseMirror ol {
+  padding: 0 1rem;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+}
+
+/* Blockquote styles */
+.ProseMirror blockquote {
+  padding-left: 1rem;
+  border-left: 3px solid #999;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Code block styles */
+.ProseMirror pre {
+  background: #0D0D0D;
+  color: #FFF;
+  font-family: 'JetBrainsMono', monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.ProseMirror pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+}
